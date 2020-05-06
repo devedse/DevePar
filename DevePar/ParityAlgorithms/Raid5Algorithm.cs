@@ -7,7 +7,7 @@ using System.Text;
 
 namespace DevePar.ParityAlgorithms
 {
-    public static class Raid5Fixer
+    public static class Raid5Algorithm
     {
         public static void GoFix(List<Block<int>> data)
         {
