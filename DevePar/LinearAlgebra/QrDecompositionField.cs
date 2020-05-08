@@ -24,6 +24,7 @@ namespace DevePar.LinearAlgebra
         /// <summary>Construct a QR decomposition.</summary>
         public QrDecompositionField(MatrixField value)
         {
+            throw new InvalidOperationException("QrDecompositionField is not supported for Galois Fields for now :)");
             if (value == null)
             {
                 throw new ArgumentNullException("value");
@@ -41,10 +42,10 @@ namespace DevePar.LinearAlgebra
             //    Field nrm = new Field(0);
             //    for (int i = k; i < m; i++)
             //    {
-            //        nrm = Hypotenuse(nrm, qr[i][k].Value);
+            //        nrm = Hypotenuse(nrm, qr[i][k]);
             //    }
 
-            //    if (nrm != 0.0)
+            //    if (nrm.Value != 0)
             //    {
             //        // Form k-th Householder vector.
             //        if (qr[k][k] < 0)
@@ -255,7 +256,7 @@ namespace DevePar.LinearAlgebra
             //if (b.Value != 0)
             //{
             //    Field r = a / b;
-            //    return Math.Abs(b) * Math.Sqrt(1 + r * r);
+            //    return b * Math.Sqrt(1 + r * r);
             //}
 
             return 0.0;

@@ -1,8 +1,9 @@
 ﻿using DevePar.Galois;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Numerics;
+using System.Linq;
 
 namespace DevePar.LinearAlgebra
 {
@@ -653,6 +654,51 @@ namespace DevePar.LinearAlgebra
 
         /// <summary>Inverse of the matrix if matrix is square, pseudoinverse otherwise.</summary>
         public MatrixField Inverse => Solve(Diagonal(rows, rows, new Field(1)));
+
+        //public MatrixField InverseGausianJordan()
+        //{
+        //    if (rows != columns)
+        //    {
+        //        throw new InvalidOperationException("A matrix can only be inversed if rows == columns");
+        //    }
+
+        //    var inverse = CreateIdentityMatrix(rows);
+
+        //    var rowsWithOneNonZeroElement = new List<Field[]>();
+        //    var rowsWithoutZeroElement = new List<Field[]>();
+
+        //    for (int i = 0; i < rows; i++)
+        //    {
+        //        var nonZeroElementCount = this.Array[i].Count(t => t.Value != 0);
+
+        //        if (nonZeroElementCount == 1)
+        //        {
+        //            rowsWithOneNonZeroElement.Add(this.Array[i]);
+        //        }
+        //        else if (nonZeroElementCount == 0)
+        //        {
+        //            rowsWithoutZeroElement.Add(this.Array[i]);
+        //        }
+        //        else
+        //        {
+        //            throw new InvalidOperationException("Can't deal with this shit");
+        //        }
+        //    }
+
+        //    foreach (var nonZeroRow in rowsWithoutZeroElement)
+        //    {
+        //        foreach (var unitRow in rowsWithOneNonZeroElement)
+        //        {
+        //            var index = unitRow.FindIndex(t => t.Value != 0);
+        //            while (nonZeroRow[index] != 0) {
+        //                nonZeroRow -= unitRow;
+        //                inverse[indexNonZeroRow]
+        //            }
+        //        }
+        //    }
+
+        //    return inverse;
+        //}
 
         /// <summary>Returns the trace of the matrix.</summary>
         /// <returns>Sum of the diagonal elements.</returns>

@@ -127,6 +127,33 @@ namespace DevePar
 
             var recoveryData = ParityAlgorithm.GenerateParityData(data, 2);
             Console.WriteLine(string.Join(Environment.NewLine, recoveryData.Select(t => string.Join(",", t.Data))));
+
+
+
+            //var totalData = data.Concat(recoveryData).ToList();
+            //data[2].Data = null; //C is null
+            data[4].Data = null; //D is null
+            //recoveryData[0].Data = null;
+            recoveryData[1].Data = null;
+            ParityAlgorithm.RecoverData(data, recoveryData, 2);
+            ParityAlgorithm.RecoverDataV2(data, recoveryData, 2);
+
+
+
+
+
+            var missing = new MatrixField(new int[,]
+            {
+                { 1 },
+                { 1 },
+                { 1 },
+                { 1 },
+                { 1 },
+                { 1 },
+                { 1 }
+            });
+
+
         }
 
         public static void GoRaid5Stuff()
