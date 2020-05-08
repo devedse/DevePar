@@ -98,6 +98,17 @@ namespace DevePar.LinearAlgebra
             }
         }
 
+        public static MatrixField CreateIdentityMatrix(int size)
+        {
+            int[,] values = new int[size, size];
+            for (int i = 0; i < size; i++)
+            {
+                values[i, i] = 1;
+            }
+
+            return new MatrixField(values);
+        }
+
         /// <summary>Determines weather two instances are equal.</summary>
         public override bool Equals(object obj)
         {

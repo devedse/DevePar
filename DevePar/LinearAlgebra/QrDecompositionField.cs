@@ -244,19 +244,19 @@ namespace DevePar.LinearAlgebra
             }
         }
 
-        private static double Hypotenuse(double a, double b)
+        private static double Hypotenuse(Field a, Field b)
         {
-            if (Math.Abs(a) > Math.Abs(b))
-            {
-                double r = b / a;
-                return Math.Abs(a) * Math.Sqrt(1 + r * r);
-            }
+            //if (a.Value > b.Value)
+            //{
+            //    Field r = b / a;
+            //    return a * Math.Sqrt(1 + r * r);
+            //}
 
-            if (b != 0)
-            {
-                double r = a / b;
-                return Math.Abs(b) * Math.Sqrt(1 + r * r);
-            }
+            //if (b.Value != 0)
+            //{
+            //    Field r = a / b;
+            //    return Math.Abs(b) * Math.Sqrt(1 + r * r);
+            //}
 
             return 0.0;
         }
