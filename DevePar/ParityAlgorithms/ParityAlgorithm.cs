@@ -9,6 +9,8 @@ namespace DevePar.ParityAlgorithms
 {
     public static class ParityAlgorithm
     {
+        private const int Base = 2;
+
         public static MatrixField CreateParityMatrix(List<Block<byte>> dataBlocks, int parityBlockCount)
         {
             int totalBlocks = dataBlocks.Count + parityBlockCount;
@@ -34,7 +36,7 @@ namespace DevePar.ParityAlgorithms
             {
                 for (byte row = 0; row < parityBlockCount; row++)
                 {
-                    var val = Field.pow(new Field((byte)(column + 1)), row);
+                    var val = Field.pow(new Field((byte)(column + Base)), row);
                     parityMatrixArray[row + dataBlocks.Count, column] = val;
                 }
             }
@@ -58,7 +60,7 @@ namespace DevePar.ParityAlgorithms
             {
                 for (byte row = 0; row < parityBlockCount; row++)
                 {
-                    var val = Field.pow(new Field((byte)(column + 1)), row);
+                    var val = Field.pow(new Field((byte)(column + Base)), row);
                     theMatrix[row + dataBlocks.Count, column] = val;
                 }
             }
@@ -81,7 +83,7 @@ namespace DevePar.ParityAlgorithms
             {
                 for (byte row = 0; row < parityBlockCount; row++)
                 {
-                    var val = Field.pow(new Field((byte)(column + 1)), row);
+                    var val = Field.pow(new Field((byte)(column + Base)), row);
                     parityMatrixArray[row, column] = val;
                 }
             }
@@ -136,7 +138,7 @@ namespace DevePar.ParityAlgorithms
 
 
             var parMatrix = ParityAlgorithm.CreateParityMatrix(dataBlocks, parityBlockCount);
-            var parMatrixOnly = ParityAlgorithm.CreateParityOnlyMatrix(dataBlocks, parityBlockCount);
+            //var parMatrixOnly = ParityAlgorithm.CreateParityOnlyMatrix(dataBlocks, parityBlockCount);
 
 
             var missingDataElements = new List<int>();
