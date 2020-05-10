@@ -171,16 +171,31 @@ namespace DevePar.ParityAlgorithms
             //        { 0, 0, 1, 0, 0 },
             //        { 0, 0, 0, 1, 0 },
             //    });
-            var subspace = new MatrixField(nonMissingRows.ToArray());
+            //If there's more repair data then we need, from all the blocks, just take the amount of data blocks
+            var rowsNeeded = nonMissingRows.Take(dataBlocks.Count).ToArray();
+            var subspace = new MatrixField(rowsNeeded);
             Console.WriteLine($"Subspace:\n\r{subspace}");
 
             var inverse = subspace.Inverse;
             Console.WriteLine($"Inverse:\n\r{inverse}");
 
+
+            foreach (var dataBlock in dataBlocks)
+            {
+                if (dataBlock.Data == null)
+                {
+                    dataBlock.Data = new byte[dataLengthInsideBlock];
+                }
+            }
+
+
+
+
             for (int i = 0; i < dataLengthInsideBlock; i++)
             {
                 var data = new List<Field>();
-                foreach (var dataBlock in combinedDataWithoutMissingData)
+                //If there's more repair data then we need, from all the blocks, just take the amount of data blocks
+                foreach (var dataBlock in combinedDataWithoutMissingData.Take(dataBlocks.Count))
                 {
                     data.Add(new Field(dataBlock.Data[i]));
                 }
@@ -190,11 +205,16 @@ namespace DevePar.ParityAlgorithms
 
                 var res = inverse * vector;
 
+
                 Console.WriteLine($"Recovered data:\n\r{res}");
+                for (int y = 0; y < res.Length; y++)
+                {
+                    dataBlocks[y].Data[i] = res.Data[y].Value;
+                }
             }
 
 
-            return combinedData;
+            return dataBlocks;
         }
 
 
@@ -215,7 +235,19 @@ namespace DevePar.ParityAlgorithms
             var missingRows = new List<Field[]>();
             var nonMissingRows = new List<Field[]>();
 
-
+            for (int i = 0; i < combinedData.Count; i++)
+            {
+                var dataBlock = combinedData[i];
+                if (dataBlock.Data == null)
+                {
+                    missingDataElements.Add(i);
+                    missingRows.Add(parMatrix.Array[i]);
+                }
+                else
+                {
+                    nonMissingRows.Add(parMatrix.Array[i]);
+                }
+            }
 
             if (missingDataElements.Count > parityBlockCount)
             {
@@ -232,25 +264,75 @@ namespace DevePar.ParityAlgorithms
             //        { 0, 0, 0, 1, 0 },
             //    });
             //var subspace = parMatrix;
-            Console.WriteLine($"parMatrix:\n\r{parMatrixBig}");
+            //Console.WriteLine($"parMatrix:\n\r{parMatrixBig}");
 
             //var inverse = subspace.Inverse;
             //Console.WriteLine($"Inverse:\n\r{inverse}");
 
-
-            for (int i = 0; i < combinedData.Count; i++)
-            {
-                var dataBlock = combinedData[i];
-                if (dataBlock.Data != null && i > 5)
-                {
-                    for (int y = 0; y < dataBlocks.Count; y++)
-                    {
-                        parMatrixBig.Array[i][y].Value = (byte)((y == i) ? 1 : 0);
-                    }
-                }
-            }
-
             Console.WriteLine($"Parmatrix2:\n\r{parMatrixBig}");
+
+            //for (int i = 0; i < combinedData.Count; i++)
+            //{
+            //    var dataBlock = combinedData[i];
+            //    if (dataBlock.Data != null)
+            //    {
+            //        for (int y = 0; y < dataBlocks.Count; y++)
+            //        {
+            //            parMatrixBig.Array[i][y].Value = (byte)((y == i) ? 1 : 0);
+            //        }
+            //    }
+            //}
+
+            //for (int i = dataBlocks.Count + 1; i < combinedData.Count; i++)
+            //{
+            //    parMatrixBig[i, i].Value = 0;
+            //}
+
+            var rowsNeeded = nonMissingRows.Take(dataBlocks.Count).ToArray();
+            var theOtherOne = new MatrixField(rowsNeeded);
+
+            Console.WriteLine($"theOtherOne:\n\r{theOtherOne}");
+
+            Console.WriteLine($"theOtherOne2:\n\r{theOtherOne.Inverse}");
+
+            var restoreMatrix = parMatrixBig;
+            //var restoreMatrix = parMatrixBig.Inverse;
+
+
+
+            //var dingetje = parMatrixBig * parMatrixBig.Inverse;
+            //Console.WriteLine($"Ruben wil dit:\n\r{dingetje}");
+
+            restoreMatrix = new MatrixField(new int[,] {
+                {1, 0, 0, 0, 0},
+                {1, 1, 1, 1, 1},
+                {0, 1, 0, 0, 0},
+                {0, 0, 1, 0, 0},
+                {0, 0, 0, 1, 0},
+                {1, 1, 1, 1, 1},
+                {1, 2, 3, 4, 5},
+            });
+
+            //for (int ggg = 0; ggg < 256; ggg++)
+            //{
+            //Console.WriteLine($"HALLO: {ggg}");
+            restoreMatrix = new MatrixField(new int[,] {
+                    {1, 0, 0, 0, 0, 0, 0},
+                    {1, 0, 1, 1, 1, 1, 0},
+                    {0, 0, 1, 0, 0, 0, 0},
+                    {0, 0, 0, 1, 0, 0, 0},
+                    {0, 0, 0, 0, 1, 0, 0},
+                    {0, 0, 0, 0, 0, 1, 0},
+                    {1, 2, 3, 4, 5, 70, 0},
+                });
+
+            //restoreMatrix = restoreMatrix.Transpose();
+            Console.WriteLine($"Restore matrix:\n\r{restoreMatrix}");
+
+
+            var resulta = new Field(2) * new Field(5);
+            var resultb = new Field(70) * new Field(8);
+
 
             for (int i = 0; i < dataLengthInsideBlock; i++)
             {
@@ -270,10 +352,13 @@ namespace DevePar.ParityAlgorithms
                 var toArray = data.ToArray();
                 var vector = new CoolVectorField(toArray);
 
-                var res = parMatrixBig * vector;
+                Console.WriteLine($"Vector:\n\r{vector}");
+
+                var res = restoreMatrix * vector;
 
                 Console.WriteLine($"Recovered data:\n\r{res}");
             }
+            //}
 
 
             return combinedData;

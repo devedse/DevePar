@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Threading;
 
 namespace DevePar
 {
@@ -15,15 +16,25 @@ namespace DevePar
             Console.WriteLine("Hello World!");
 
 
+
+
+            
+
+            
+
+            Thread.Sleep(1000000);
+
             GoParStuff();
 
 
-
-
+            //8736614
+            //315918308
 
 
 
         }
+
+
 
         public static void GoParStuff()
         {
@@ -106,6 +117,7 @@ namespace DevePar
             Console.WriteLine(result3);
 
 
+            int parityBlocks = 2;
 
             var data = new List<Block<byte>>()
             {
@@ -117,26 +129,29 @@ namespace DevePar
             };
 
 
-            var parMatrix = ParityAlgorithm.CreateParityMatrix(data, 2);
-            var parMatrixOnly = ParityAlgorithm.CreateParityOnlyMatrix(data, 2);
+            var parMatrix = ParityAlgorithm.CreateParityMatrix(data, parityBlocks);
+            var parMatrixOnly = ParityAlgorithm.CreateParityOnlyMatrix(data, parityBlocks);
 
             Console.WriteLine();
             Console.Write(parMatrix);
             Console.WriteLine();
             Console.Write(parMatrixOnly);
 
-            var recoveryData = ParityAlgorithm.GenerateParityData(data, 2);
+            var recoveryData = ParityAlgorithm.GenerateParityData(data, parityBlocks);
             Console.WriteLine(string.Join(Environment.NewLine, recoveryData.Select(t => string.Join(",", t.Data))));
 
 
 
             //var totalData = data.Concat(recoveryData).ToList();
-            //data[2].Data = null; //C is null
-            data[4].Data = null; //D is null
+            //data[0].Data = null;
+            data[1].Data = null;
+            //data[2].Data = null;
+            //data[3].Data = null;
+            //data[4].Data = null;
             //recoveryData[0].Data = null;
             recoveryData[1].Data = null;
-            ParityAlgorithm.RecoverData(data, recoveryData, 2);
-            ParityAlgorithm.RecoverDataV2(data, recoveryData, 2);
+            ParityAlgorithm.RecoverData(data, recoveryData, parityBlocks);
+            ParityAlgorithm.RecoverDataV2(data, recoveryData, parityBlocks);
 
 
 
@@ -197,6 +212,66 @@ namespace DevePar
             }
         }
 
+        public static void DetermineSeedForRandom()
+        {
+            var data = new List<Block<byte>>()
+            {
+                new Block<byte>() { Data = new byte[] { 10 }},
+                new Block<byte>() { Data = new byte[] { 5 }},
+                new Block<byte>() { Data = new byte[] { 8 }},
+                new Block<byte>() { Data = new byte[] { 13 }},
+                new Block<byte>() { Data = new byte[] { 2 }},
+            };
 
+            int curMax = 0;
+            int lowestDiff = 256;
+
+
+            for (int i = 0; i < int.MaxValue; i++)
+            {
+                bool found = true;
+                var random = new Random(i);
+                //var random = new Random(8736614);
+                for (int y = 0; y < 5; y++)
+                {
+                    var newRandom = random.Next(256);
+                    var diff = Math.Abs(newRandom - data[y].Data[0]);
+                    if (newRandom != data[y].Data[0])
+                    {
+                        found = false;
+                    }
+
+                    if (y + 1 > curMax && found)
+                    {
+                        Console.WriteLine($"New max: {y + 1}, with seed: {i}");
+                        curMax = y + 1;
+                        lowestDiff = 256;
+                    }
+                    else if (y + 1 > curMax && diff < lowestDiff)
+                    {
+                        Console.WriteLine($"New max: {y + 1}, with seed: {i} with diff: {diff} (Expected: {data[y].Data[0]} Actual: {newRandom})");
+                        lowestDiff = diff;
+                    }
+
+                    if (found == false)
+                    {
+                        break;
+                    }
+                }
+
+                if (found)
+                {
+                    Console.WriteLine($"Found seed {i}");
+                    break;
+                }
+
+                if (i % 10000000 == 0)
+                {
+                    Console.WriteLine(i);
+                }
+            }
+
+            Console.WriteLine("Done");
+        }
     }
 }
