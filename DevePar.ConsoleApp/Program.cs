@@ -4,36 +4,15 @@ using DevePar.ParityAlgorithms;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
-using System.Threading;
 
-namespace DevePar
+namespace DevePar.ConsoleApp
 {
-    class Program
+    public static class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             Console.WriteLine("Hello World!");
-
-
-
-
-            
-
-            
-
-            Thread.Sleep(1000000);
-
-            GoParStuff();
-
-
-            //8736614
-            //315918308
-
-
-
         }
-
 
 
         public static void GoParStuff()
