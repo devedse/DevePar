@@ -1,8 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>DevePar</AssemblyName>
+    <PackageId>DevePar</PackageId>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <Version>1.0.0.0</Version>
+    <Title>DevePar</Title>
+    <Authors>Devedse</Authors>
+    <Description>This is a library that contains parity algorithms.</Description>
+    <PackageProjectUrl>https://github.com/devedse/DevePar</PackageProjectUrl>
+    <PackageTags>csharp;code;helpers;parity;raid</PackageTags>
+    <DebugType>full</DebugType>
   </PropertyGroup>
 
   <ItemGroup>
