@@ -46,14 +46,14 @@ namespace DevePar.Tests.ParityAlgorithms
             RunRepairTest(dataBlockCount, parityBlockCount, dataLength);
         }
 
-        [Fact]
-        public void RestoresMissingDataForDataFor5BlocksAnd5Parity()
-        {
-            int dataBlockCount = 5;
-            int parityBlockCount = 5;
-            int dataLength = 5000;
-            RunRepairTest(dataBlockCount, parityBlockCount, dataLength);
-        }
+        //[Fact]
+        //public void RestoresMissingDataForDataFor5BlocksAnd5Parity()
+        //{
+        //    int dataBlockCount = 5;
+        //    int parityBlockCount = 5;
+        //    int dataLength = 5000;
+        //    RunRepairTest(dataBlockCount, parityBlockCount, dataLength);
+        //}
 
         private static void RunRepairTest(int dataBlockCount, int parityBlockCount, int dataLength)
         {

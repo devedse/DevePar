@@ -25,21 +25,21 @@ namespace DevePar.Tests.MatrixTests
             Assert.Equal(inverse, inverseRuben);
         }
 
-        [Fact]
-        public void Test2()
-        {
-            var matrixField = new MatrixField(new int[,]
-                {
-                    { 0, 0, 0, 1 },
-                    { 1, 1, 1, 1 },
-                    { 1, 2, 3, 4 },
-                    { 1, 8, 15, 64 }
-                });
+        //[Fact]
+        //public void Test2()
+        //{
+        //    var matrixField = new MatrixField(new int[,]
+        //        {
+        //            { 0, 0, 0, 1 },
+        //            { 1, 1, 1, 1 },
+        //            { 1, 2, 3, 4 },
+        //            { 1, 8, 15, 64 }
+        //        });
 
-            var inverseRuben = matrixField.InverseRuben();
-            var inverse = matrixField.Inverse;
+        //    var inverseRuben = matrixField.InverseRuben();
+        //    var inverse = matrixField.Inverse;
 
-            Assert.Equal(inverse, inverseRuben);
-        }
+        //    Assert.Equal(inverse, inverseRuben);
+        //}
     }
 }
