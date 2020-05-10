@@ -132,7 +132,7 @@ namespace DevePar.ParityAlgorithms
         {
             var combinedData = dataBlocks.Concat(recoveryBlocks).ToList();
             var combinedDataWithoutMissingData = combinedData.Where(t => t.Data != null).ToList();
-            int dataLengthInsideBlock = dataBlocks.First(t => t.Data != null).Data.Length;
+            int dataLengthInsideBlock = combinedData.First(t => t.Data != null).Data.Length;
 
 
             var parMatrix = ParityAlgorithm.CreateParityMatrix(dataBlocks, parityBlockCount);
