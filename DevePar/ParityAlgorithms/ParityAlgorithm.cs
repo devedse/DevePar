@@ -176,8 +176,15 @@ namespace DevePar.ParityAlgorithms
             var subspace = new MatrixField(rowsNeeded);
             Console.WriteLine($"Subspace:\n\r{subspace}");
 
-            var inverse = subspace.Inverse;
+            var inverse = subspace.InverseRuben();
+            var inverse2 = subspace.Inverse;
             Console.WriteLine($"Inverse:\n\r{inverse}");
+
+
+            if (inverse2 != inverse)
+            {
+                Console.WriteLine("NU");
+            }
 
 
             foreach (var dataBlock in dataBlocks)

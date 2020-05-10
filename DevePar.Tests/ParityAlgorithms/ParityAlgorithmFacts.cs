@@ -65,8 +65,10 @@ namespace DevePar.Tests.ParityAlgorithms
             {
                 var rowsToDelete = DeleteDataHelper.DatasToDelete(dataBlockCount + parityBlockCount, dataBlocksToDeleteCount);
 
-                foreach (var toDelete in rowsToDelete)
+                for (int zzz = 0; zzz < rowsToDelete.Count; zzz++)
                 {
+                    var toDelete = rowsToDelete[zzz];
+
                     var data = GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength);
                     var parityData = ParityAlgorithm.GenerateParityData(data, parityBlockCount);
                     var combinedData = data.Concat(parityData).ToList();
@@ -74,6 +76,11 @@ namespace DevePar.Tests.ParityAlgorithms
                     foreach (var rowToDelete in toDelete)
                     {
                         combinedData[rowToDelete].Data = null;
+                    }
+
+                    if (dataBlocksToDeleteCount == 2)
+                    {
+                        
                     }
 
                     var repairedData = ParityAlgorithm.RecoverData(data, parityData, parityBlockCount);

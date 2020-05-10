@@ -113,11 +113,11 @@ namespace DevePar.LinearAlgebra
         /// <summary>Determines weather two instances are equal.</summary>
         public override bool Equals(object obj)
         {
-            return Equals(this, (Matrix)obj);
+            return Equals(this, (MatrixField)obj);
         }
 
         /// <summary>Determines weather two instances are equal.</summary>
-        public static bool Equals(Matrix left, Matrix right)
+        public static bool Equals(MatrixField left, MatrixField right)
         {
             if (left == ((object)right))
             {
@@ -654,6 +654,102 @@ namespace DevePar.LinearAlgebra
 
         /// <summary>Inverse of the matrix if matrix is square, pseudoinverse otherwise.</summary>
         public MatrixField Inverse => Solve(Diagonal(rows, rows, new Field(1)));
+
+        public MatrixField InverseRuben()
+        {
+            if (rows != columns)
+            {
+                throw new InvalidOperationException("A matrix can only be inversed if rows == columns");
+            }
+
+            var identity = MatrixField.CreateIdentityMatrix(rows);
+
+            var cloned = this.Clone();
+
+            SwapRowsWithZeroDiagonal(cloned, identity, rows);
+            CleanBottomLeft(cloned, identity, rows);
+            CleanTopRight(cloned, identity, rows);
+            NormalizeMatrixTheRubenWay(cloned, identity, rows);
+
+            return identity;
+        }
+
+        private static void SwapRowsWithZeroDiagonal(MatrixField M, MatrixField I, int n)
+        {
+            for (var r = 0; r < n; r++)
+            {
+                // swap
+                if (M[r, r].Value == 0)
+                {
+                    for (var swaprow = r + 1; swaprow < n; swaprow++)
+                    {
+                        if (M[swaprow, r].Value != 0)
+                        {
+                            for (var c = 0; c < n; c++)
+                            {
+                                var tempM = M[r, c];
+                                var tempI = I[r, c];
+                                M[r, c] = M[swaprow, c];
+                                I[r, c] = I[swaprow, c];
+                                M[swaprow, c] = tempM;
+                                I[swaprow, c] = tempI;
+                            }
+
+                            break;
+                        }
+                        if (swaprow == n - 1)
+                        {
+                            throw new Exception("Could not find non-zero diagonal element");
+                        }
+                    }
+                }
+            }
+        }
+
+        private static void CleanTopRight(MatrixField M, MatrixField I, int n)
+        {
+            for (var r1 = n - 1; r1 >= 0; r1--)
+            {
+                for (var r2 = r1 - 1; r2 >= 0; r2--)
+                {
+                    var subtractMultiplier = M[r2, r1] / M[r1, r1];
+                    for (var c = 0; c < n; c++)
+                    {
+                        M[r2, c] -= subtractMultiplier * M[r1, c];
+                        I[r2, c] -= subtractMultiplier * I[r1, c];
+                    }
+                }
+            }
+        }
+
+        private static void CleanBottomLeft(MatrixField M, MatrixField I, int n)
+        {
+            for (var r1 = 0; r1 < n; r1++)
+            {
+                for (var r2 = r1 + 1; r2 < n; r2++)
+                {
+                    var subtractMultiplier = M[r2, r1] / M[r1, r1];
+                    for (var c = 0; c < n; c++)
+                    {
+                        M[r2, c] -= subtractMultiplier * M[r1, c];
+                        I[r2, c] -= subtractMultiplier * I[r1, c];
+                    }
+                }
+            }
+        }
+
+        private static void NormalizeMatrixTheRubenWay(MatrixField M, MatrixField I, int n)
+        {
+            for (var r = 0; r < n; r++)
+            {
+                var factor = M[r, r];
+                for (var c = 0; c < n; c++)
+                {
+                    M[r, c] /= factor;
+                    I[r, c] /= factor;
+                }
+            }
+        }
 
         //public MatrixField InverseGausianJordan()
         //{
