@@ -31,8 +31,8 @@ namespace DevePar.Tests.ParityAlgorithms
         [Fact]
         public void RestoresMissingDataForDataFor3BlocksAnd3Parity()
         {
-            int dataBlockCount = 4;
-            int parityBlockCount = 4;
+            int dataBlockCount = 3;
+            int parityBlockCount = 3;
             int dataLength = 1;
             RunRepairTest(dataBlockCount, parityBlockCount, dataLength);
         }
