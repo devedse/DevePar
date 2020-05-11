@@ -1,3 +1,5 @@
+$ErrorActionPreference = "Stop"
+
 $ReleaseVersionNumber = $env:APPVEYOR_BUILD_VERSION
 $PreReleaseName = ''
 

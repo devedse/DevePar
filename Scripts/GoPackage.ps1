@@ -1,3 +1,5 @@
+$ErrorActionPreference = "Stop"
+
 $invocation = (Get-Variable MyInvocation).Value
 $directorypath = Split-Path $invocation.MyCommand.Path
 $solutionRoot = Split-Path -Path $directorypath -Parent
@@ -13,7 +15,7 @@ DeleteFileIfExists $7zFilePath
 DeleteFileIfExists $zipFilePath
 DeleteFolderIfExists $outputDir
 
-$buildPath = Join-Path $solutionRoot "DevePar\bin\Release\netstandard2.0"
+$buildPath = Join-Path $solutionRoot "DevePar\bin\Release\netstandard2.1"
 
 # Exclude *.pdb files
 7z a -mm=Deflate -mfb=258 -mpass=15 "$zipFilePath" "$buildPath\*" '-x!*.pdb'
