@@ -215,7 +215,7 @@ namespace DevePar.ParityAlgorithms
                 var res = inverse * vector;
 
 
-                Console.WriteLine($"Recovered data:\n\r{res}");
+                //Console.WriteLine($"Recovered data:\n\r{res}");
                 for (int y = 0; y < res.Length; y++)
                 {
                     dataBlocks[y].Data[i] = res.Data[y].Value;
@@ -365,7 +365,7 @@ namespace DevePar.ParityAlgorithms
 
                 var res = restoreMatrix * vector;
 
-                Console.WriteLine($"Recovered data:\n\r{res}");
+                //Console.WriteLine($"Recovered data:\n\r{res}");
             }
             //}
 
