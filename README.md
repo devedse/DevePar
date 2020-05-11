@@ -1,6 +1,8 @@
 # DevePar
 This project contains a basic implementation of the RAID 5 and RAID 6 algorithms in C#. It can basically also used for the Parchive algorithm.
 
+**Currently this solution does not contain any working code so it should just be used for research purposes**
+
 ## Build status
 
 | Travis (Linux/Osx build) | AppVeyor (Windows build) |
