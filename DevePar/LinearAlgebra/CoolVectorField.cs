@@ -3,19 +3,24 @@ using System.Linq;
 
 namespace DevePar.LinearAlgebra
 {
-    public class CoolVectorField
+    public class CoolVectorGField
     {
-        public Field[] Data { get; set; }
+        public GField[] Data { get; set; }
         public int Length => Data.Length;
 
-        public CoolVectorField(params Field[] data)
+        public CoolVectorGField(params GField[] data)
         {
             Data = data;
         }
 
-        public CoolVectorField(params int[] data)
+        public CoolVectorGField(GFTable table, params uint[] data)
         {
-            Data = data.Select(t => new Field((byte)t)).ToArray();
+            Data = data.Select(t => table.CreateField(t)).ToArray();
+        }
+
+        public CoolVectorGField(GFTable table, params int[] data)
+        {
+            Data = data.Select(t => table.CreateField((uint)t)).ToArray();
         }
 
         public override string ToString()

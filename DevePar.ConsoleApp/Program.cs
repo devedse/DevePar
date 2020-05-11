@@ -22,7 +22,12 @@ namespace DevePar.ConsoleApp
 
 
             var test1 = GFTable.GFTable8;
-            var test2 = new Field(0);
+
+            var result = test1.Add(5, 10);
+            result = test1.Mul(10, 5);
+
+
+            var res2 = test1.Add(250, 50);
         }
 
 

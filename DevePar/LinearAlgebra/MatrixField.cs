@@ -313,7 +313,7 @@ namespace DevePar.LinearAlgebra
             {
                 for (int j = 0; j < columns; j++)
                 {
-                    x[i][j] = data[i][j];
+                    x[i][j] = data[i][j].Clone();
                 }
             }
 
@@ -905,7 +905,7 @@ namespace DevePar.LinearAlgebra
 
         public MatrixField AddRowsAtTheEnd(MatrixField right)
         {
-            if (right.columns != this.columns)
+            if (Columns != right.Columns)
             {
                 throw new InvalidOperationException("Columns should be equal");
             }

@@ -162,7 +162,32 @@ namespace DevePar.Tests.ParityAlgorithms
             VerifyData(expectedData, repairedData);
         }
 
+        [Fact]
+        public void TestSpecificScenario3()
+        {
+            int dataBlockCount = 5;
+            int parityBlockCount = 3;
+            int dataLength = 1;
 
+
+            var expectedData = GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength);
+
+            var data = GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength);
+            var parityData = ParityAlgorithm.GenerateParityData(data, parityBlockCount);
+            var combinedData = data.Concat(parityData).ToList();
+
+            combinedData[0].Data = null;
+            combinedData[2].Data = null;
+            combinedData[5].Data = null;
+
+
+            var matrix = ParityAlgorithm.CreateParityMatrix(expectedData, parityBlockCount);
+            Console.WriteLine($"Matrix: {matrix}");
+
+            var repairedData = ParityAlgorithm.RecoverData(data, parityData, parityBlockCount);
+
+            VerifyData(expectedData, repairedData);
+        }
 
         private static void RunRepairTest(int dataBlockCount, int parityBlockCount, int dataLength)
         {

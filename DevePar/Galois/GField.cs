@@ -1,6 +1,6 @@
 ﻿namespace DevePar.Galois
 {
-    public class GField
+    public struct GField
     {
         public GFTable Table { get; }
         public uint Value { get; }
@@ -30,11 +30,11 @@
                 return false;
             }
 
-            var f = obj as GField;
-            if (f is null)
+            if (!(obj is GField))
             {
                 return false;
             }
+            var f = (GField)obj;
             return Value == f.Value;
         }
 

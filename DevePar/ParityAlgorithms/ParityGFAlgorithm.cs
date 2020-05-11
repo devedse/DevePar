@@ -7,7 +7,7 @@ using System.Text;
 
 namespace DevePar.ParityAlgorithms
 {
-    public static class ParityGFAlgorithm
+    public static class ParityAlgorithm
     {
         private const int Base = 2;
 
