@@ -68,7 +68,7 @@ namespace DevePar.ParityAlgorithms
                 for (byte row = 0; row < parityBlockCount; row++)
                 {
                     //var val = Field.pow(new Field((byte)(column + Base)), row);
-                    var val = Field.pow(baseList[column], row);
+                    var val = Field.pow(baseList[column], (byte)(row + 1));
                     parityMatrixArray[row, column] = val;
                 }
             }

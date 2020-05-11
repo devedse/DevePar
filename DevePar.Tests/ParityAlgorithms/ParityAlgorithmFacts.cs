@@ -1,4 +1,5 @@
-﻿using DevePar.ParityAlgorithms;
+﻿using DevePar.Galois;
+using DevePar.ParityAlgorithms;
 using DevePar.Tests.TestHelpers;
 using System;
 using System.Collections.Generic;
@@ -43,6 +44,7 @@ namespace DevePar.Tests.ParityAlgorithms
             int dataBlockCount = 4;
             int parityBlockCount = 4;
             int dataLength = 1;
+
             RunRepairTest(dataBlockCount, parityBlockCount, dataLength);
         }
 
@@ -211,6 +213,95 @@ namespace DevePar.Tests.ParityAlgorithms
                     Assert.Equal(curExpectedValue, curRepairedValue);
                 }
             }
+        }
+
+
+        [Fact]
+        public void TestPoly()
+        {
+            //This scenario works if using:
+            //var val = Field.pow(baseList[row], column);
+
+            //int dataBlockCount = 4;
+            //int parityBlockCount = 4;
+            //int dataLength = 1;
+
+            //var workingPolynomials = new List<int>();
+
+            //var original = Field.polynomial;
+
+            //for (int i = 0; i < 300; i++)
+            //{
+            //    Field.polynomial = i;
+            //    Field.GenerateExpAndLogTables();
+
+            //    var expectedData = GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength);
+
+
+
+            //    bool worked = true;
+            //    for (int dataBlocksToDeleteCount = 1; dataBlocksToDeleteCount <= parityBlockCount; dataBlocksToDeleteCount++)
+            //    {
+            //        var rowsToDelete = DeleteDataHelper.DatasToDelete(dataBlockCount + parityBlockCount, dataBlocksToDeleteCount);
+
+            //        for (int zzz = 0; zzz < rowsToDelete.Count; zzz++)
+            //        {
+            //            var toDelete = rowsToDelete[zzz];
+
+            //            var data = GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength);
+            //            var parityData = ParityAlgorithm.GenerateParityData(data, parityBlockCount);
+            //            var combinedData = data.Concat(parityData).ToList();
+
+            //            foreach (var rowToDelete in toDelete)
+            //            {
+            //                combinedData[rowToDelete].Data = null;
+            //            }
+
+            //            if (dataBlocksToDeleteCount == 2)
+            //            {
+
+            //            }
+
+            //            try
+            //            {
+            //                var repairedData = ParityAlgorithm.RecoverData(data, parityData, parityBlockCount);
+
+            //                for (int y = 0; y < expectedData.Count; y++)
+            //                {
+            //                    var curExpectedData = expectedData[y];
+            //                    var curRepairData = repairedData[y];
+            //                    for (int z = 0; z < curExpectedData.Data.Length; z++)
+            //                    {
+            //                        var curExpectedValue = curExpectedData.Data[z];
+            //                        var curRepairedValue = curRepairData.Data[z];
+
+            //                        if (curExpectedValue != curRepairedValue)
+            //                        {
+            //                            worked = false;
+            //                        }
+            //                    }
+            //                }
+            //            }
+            //            catch (Exception ex)
+            //            {
+            //                worked = false;
+            //            }
+            //        }
+            //    }
+
+            //    if (worked)
+            //    {
+            //        workingPolynomials.Add(i);
+            //    }
+            //}
+
+            //Field.polynomial = original;
+            //Field.GenerateExpAndLogTables();
+
+            //var str = string.Join(",", workingPolynomials);
+            //Console.WriteLine(str);
+
+            //29,43,45,77,95,99,101,105,113,135,141,169,195,207,231,245,285,299
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using DevePar.MathHelpers;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 
 namespace DevePar.Galois
@@ -12,57 +13,144 @@ namespace DevePar.Galois
         public static GFTable GFTable16 => GFTable16Lazy.Value;
         private static Lazy<GFTable> GFTable16Lazy { get; } = new Lazy<GFTable>(() => new GFTable(16, 0x1100D));
 
-        public int Size { get; }
-        public uint Power { get; }
+        public uint Size { get; }
+        public uint Limit { get; }
+        public int Power { get; }
         public uint Polynomial { get; }
 
-        public static byte[] Exp;
-        public static byte[] Log;
+        private static uint[] antilog;
+        private static uint[] log;
 
-        private const int generator = 2;
-
-        public GFTable(uint power, uint polynomial)
+        public GFTable(int power, uint polynomial)
         {
             Power = power;
             Polynomial = polynomial;
-            Size = MathHelper.IntPow(2, power);
+            Size = MathHelper.UintPow(2, (uint)power);
+            Limit = Size - 1;
 
-            Exp = new byte[Size];
-            Log = new byte[Size];
+            antilog = new uint[Size];
+            log = new uint[Size];
 
-            byte val = 0x01;
-            for (int i = 0; i < Size; i++)
+
+
+
+            log[0] = Limit;
+            antilog[Limit] = 0;
+
+            uint mask = 1;
+            for (uint depth = 0; depth < Size; depth++)
             {
-                Exp[i] = val;
-                if (i < Size - 1)
-                {
-                    Log[val] = (byte)i;
-                }
-                val = multiply(generator, val);
+                log[mask] = depth;
+                antilog[depth] = mask;
+
+                mask = Shift(mask);
             }
         }
 
-        private byte multiply(byte a, byte b)
+        private uint Shift(uint value)
         {
-            throw new NotImplementedException();
-            //byte result = 0;
-            //byte aa = a;
-            //byte bb = b;
-            //while (bb != 0)
-            //{
-            //    if ((bb & 1) != 0)
-            //    {
-            //        result ^= aa;
-            //    }
-            //    byte highest_bit = (byte)(aa & 0x80);
-            //    aa <<= 1;
-            //    if (highest_bit != 0)
-            //    {
-            //        aa ^= (Polynomial & 0xFF);
-            //    }
-            //    bb >>= 1;
-            //}
-            //return result;
+            var shifted = value << 1;
+            var shiftedSize = shifted & Size;
+
+            if (shiftedSize != 0)
+            {
+                var retval = shifted ^ Polynomial;
+                return retval;
+            }
+            else
+            {
+                return shifted;
+            }
+        }
+
+        public GField CreateField(uint value)
+        {
+            return new GField(this, value);
+        }
+
+        private void ThrowIfOutsideOfField(uint a, uint b)
+        {
+            if (a < 0 || a > Limit || b < 0 || b > Limit) throw new ArgumentException("The arguments need to exist in the field.");
+        }
+
+        public uint Add(uint a, uint b)
+        {
+            ThrowIfOutsideOfField(a, b);
+
+            return a ^ b;
+        }
+
+        public uint Sub(uint a, uint b)
+        {
+            ThrowIfOutsideOfField(a, b);
+            return a ^ b;
+        }
+
+        public uint Mul(uint a, uint b)
+        {
+            ThrowIfOutsideOfField(a, b);
+
+            if (a == 0 || b == 0)
+            {
+                return 0;
+            }
+            else
+            {
+                var sum = log[a] + log[b];
+                if (sum >= Limit)
+                {
+                    return antilog[sum - Limit];
+                }
+                else
+                {
+                    return antilog[sum];
+                }
+            }
+        }
+
+        public uint Div(uint a, uint b)
+        {
+            ThrowIfOutsideOfField(a, b);
+
+            if (a == 0)
+            {
+                return 0;
+            }
+            else
+            {
+                var sum = log[a] - log[b];
+                if (sum < 0)
+                {
+                    return antilog[sum + Limit];
+                }
+                else
+                {
+                    return antilog[sum];
+                }
+            }
+        }
+
+        public uint Pow(uint a, uint b)
+        {
+            ThrowIfOutsideOfField(a, b);
+
+            if (a == 0 || b == 0)
+            {
+                return 0;
+            }
+            else
+            {
+                var sum = log[a] * b;
+                sum = (sum >> Power) + (sum & Limit);
+                if (sum >= Limit)
+                {
+                    return antilog[sum - Limit];
+                }
+                else
+                {
+                    return antilog[sum];
+                }
+            }
         }
     }
 }

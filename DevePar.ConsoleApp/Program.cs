@@ -14,6 +14,15 @@ namespace DevePar.ConsoleApp
             Console.WriteLine("Hello World!");
 
             var baseListTest = BaseCalculator.CalcBase(8).ToList();
+
+            byte aa = 0;
+            aa ^= 0x11D & 0xFF;
+            byte ding = 0x11D & 0xFF;
+
+
+
+            var test1 = GFTable.GFTable8;
+            var test2 = new Field(0);
         }
 
 
