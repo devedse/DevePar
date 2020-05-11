@@ -46,6 +46,15 @@ namespace DevePar.Tests.ParityAlgorithms
             RunRepairTest(dataBlockCount, parityBlockCount, dataLength);
         }
 
+        [Fact]
+        public void RestoresMissingDataForDataFor5BlocksAnd5Parity()
+        {
+            int dataBlockCount = 5;
+            int parityBlockCount = 5;
+            int dataLength = 1;
+            RunRepairTest(dataBlockCount, parityBlockCount, dataLength);
+        }
+
         //[Fact]
         //public void RestoresMissingDataForDataFor5BlocksAnd5Parity()
         //{
@@ -54,6 +63,104 @@ namespace DevePar.Tests.ParityAlgorithms
         //    int dataLength = 5000;
         //    RunRepairTest(dataBlockCount, parityBlockCount, dataLength);
         //}
+
+        [Fact]
+        public void TestSpecificScenario()
+        {
+            //This scenario works if using:
+            //var val = Field.pow(baseList[row], column);
+
+            int dataBlockCount = 5;
+            int parityBlockCount = 5;
+            int dataLength = 1;
+
+
+            var expectedData = GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength);
+
+            var data = GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength);
+            var parityData = ParityAlgorithm.GenerateParityData(data, parityBlockCount);
+            var combinedData = data.Concat(parityData).ToList();
+
+            combinedData[0].Data = null;
+            combinedData[3].Data = null;
+            combinedData[4].Data = null;
+            combinedData[5].Data = null;
+
+
+            var matrix = ParityAlgorithm.CreateParityMatrix(expectedData, parityBlockCount);
+            Console.WriteLine($"Matrix: {matrix}");
+            //1 0 0 0 0
+            //0 1 0 0 0
+            //0 0 1 0 0
+            //0 0 0 1 0
+            //0 0 0 0 1
+            //1 2 4 8 16
+            //1 4 16 64 29
+            //1 16 29 205 76
+            //1 128 19 117 24
+            //1 29 76 143 157
+
+            var repairedData = ParityAlgorithm.RecoverData(data, parityData, parityBlockCount);
+
+            //0 1 0 0 0
+            //0 0 1 0 0
+            //1 4 16 64 29
+            //1 16 29 205 76
+            //1 128 19 117 24
+
+            VerifyData(expectedData, repairedData);
+        }
+
+        [Fact]
+        public void TestSpecificScenario2()
+        {
+            //This scenario works if using:
+            //var val = Field.pow(baseList[column], row);
+
+            int dataBlockCount = 5;
+            int parityBlockCount = 5;
+            int dataLength = 1;
+
+
+            var expectedData = GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength);
+
+            var data = GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength);
+            var parityData = ParityAlgorithm.GenerateParityData(data, parityBlockCount);
+            var combinedData = data.Concat(parityData).ToList();
+
+            combinedData[1].Data = null;
+            combinedData[2].Data = null;
+            combinedData[3].Data = null;
+            combinedData[6].Data = null;
+            combinedData[7].Data = null;
+
+
+            var matrix = ParityAlgorithm.CreateParityMatrix(expectedData, parityBlockCount);
+            Console.WriteLine($"Matrix: {matrix}");
+
+            //1 0 0 0 0
+            //0 1 0 0 0
+            //0 0 1 0 0
+            //0 0 0 1 0
+            //0 0 0 0 1
+            //1 1 1 1 1
+            //2 4 16 128 29
+            //4 16 29 19 76
+            //8 64 205 117 143
+            //16 29 76 24 157
+
+            var repairedData = ParityAlgorithm.RecoverData(data, parityData, parityBlockCount);
+
+            //1 0 0 0 0
+            //0 0 0 0 1
+            //1 1 1 1 1
+            //8 64 205 117 143
+            //16 29 76 24 157
+
+            VerifyData(expectedData, repairedData);
+        }
+
+
 
         private static void RunRepairTest(int dataBlockCount, int parityBlockCount, int dataLength)
         {
@@ -80,23 +187,28 @@ namespace DevePar.Tests.ParityAlgorithms
 
                     if (dataBlocksToDeleteCount == 2)
                     {
-                        
+
                     }
 
                     var repairedData = ParityAlgorithm.RecoverData(data, parityData, parityBlockCount);
 
-                    for (int y = 0; y < expectedData.Count; y++)
-                    {
-                        var curExpectedData = expectedData[y];
-                        var curRepairData = repairedData[y];
-                        for (int z = 0; z < curExpectedData.Data.Length; z++)
-                        {
-                            var curExpectedValue = curExpectedData.Data[z];
-                            var curRepairedValue = curRepairData.Data[z];
+                    VerifyData(expectedData, repairedData);
+                }
+            }
+        }
 
-                            Assert.Equal(curExpectedValue, curRepairedValue);
-                        }
-                    }
+        private static void VerifyData(List<Block<byte>> expectedData, List<Block<byte>> repairedData)
+        {
+            for (int y = 0; y < expectedData.Count; y++)
+            {
+                var curExpectedData = expectedData[y];
+                var curRepairData = repairedData[y];
+                for (int z = 0; z < curExpectedData.Data.Length; z++)
+                {
+                    var curExpectedValue = curExpectedData.Data[z];
+                    var curRepairedValue = curRepairData.Data[z];
+
+                    Assert.Equal(curExpectedValue, curRepairedValue);
                 }
             }
         }

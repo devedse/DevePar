@@ -12,6 +12,8 @@ namespace DevePar.ConsoleApp
         public static void Main(string[] args)
         {
             Console.WriteLine("Hello World!");
+
+            var baseListTest = BaseCalculator.CalcBase(8).ToList();
         }
 
 
@@ -130,7 +132,7 @@ namespace DevePar.ConsoleApp
             //recoveryData[0].Data = null;
             recoveryData[1].Data = null;
             ParityAlgorithm.RecoverData(data, recoveryData, parityBlocks);
-            ParityAlgorithm.RecoverDataV2(data, recoveryData, parityBlocks);
+            //ParityAlgorithm.RecoverDataV2(data, recoveryData, parityBlocks);
 
 
 

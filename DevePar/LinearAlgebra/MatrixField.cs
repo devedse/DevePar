@@ -902,5 +902,16 @@ namespace DevePar.LinearAlgebra
 
             return new CoolVectorField(newData);
         }
+
+        public MatrixField AddRowsAtTheEnd(MatrixField right)
+        {
+            if (right.columns != this.columns)
+            {
+                throw new InvalidOperationException("Columns should be equal");
+            }
+
+            var newMatrixRows = data.Concat(right.data).ToArray();
+            return new MatrixField(newMatrixRows);
+        }
     }
 }
