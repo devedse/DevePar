@@ -60,6 +60,23 @@ namespace DevePar.Tests.ParityGFAlgorithms
             RunRepairTest(gfTable, dataBlockCount, parityBlockCount, dataLength);
         }
 
+        [Fact]
+        public void RestoresMissingDataForDataForUltraTest()
+        {
+            int dataLength = 1;
+            var gfTable = GFTable.GFTable8;
+
+            int maxDataBlocksToTest = 8;
+
+            for (int dataBlockCount = 1; dataBlockCount <= maxDataBlocksToTest; dataBlockCount++)
+            {
+                for (int parityBlockCount = 1; parityBlockCount <= dataBlockCount; parityBlockCount++)
+                {
+                    RunRepairTest(gfTable, dataBlockCount, parityBlockCount, dataLength);
+                }
+            }
+        }
+
         //[Fact]
         //public void RestoresMissingDataForDataFor5BlocksAnd5Parity()
         //{
@@ -85,7 +102,7 @@ namespace DevePar.Tests.ParityGFAlgorithms
             var expectedData = GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength);
 
             var data = GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength);
-            var parityData = ParityGFAlgorithm.GenerateParityData(gfTable, data, parityBlockCount);
+            var parityData = ParityGFAlgorithm.GenerateParityData2(gfTable, data, parityBlockCount);
             var combinedData = data.Concat(parityData).ToList();
 
             combinedData[0].Data = null;
@@ -93,27 +110,10 @@ namespace DevePar.Tests.ParityGFAlgorithms
             combinedData[4].Data = null;
             combinedData[5].Data = null;
 
+            //var matrix = ParityGFAlgorithm.CreateParityMatrix2(gfTable, expectedData.Count, parityBlockCount);
+            //Console.WriteLine($"Matrix: {matrix}"); 
 
-            var matrix = ParityGFAlgorithm.CreateParityMatrix(gfTable, expectedData.Count, parityBlockCount);
-            Console.WriteLine($"Matrix: {matrix}");
-            //1 0 0 0 0
-            //0 1 0 0 0
-            //0 0 1 0 0
-            //0 0 0 1 0
-            //0 0 0 0 1
-            //1 2 4 8 16
-            //1 4 16 64 29
-            //1 16 29 205 76
-            //1 128 19 117 24
-            //1 29 76 143 157
-
-            var repairedData = ParityGFAlgorithm.RecoverData(gfTable, data, parityData, parityBlockCount);
-
-            //0 1 0 0 0
-            //0 0 1 0 0
-            //1 4 16 64 29
-            //1 16 29 205 76
-            //1 128 19 117 24
+            var repairedData = ParityGFAlgorithm.RecoverData2(gfTable, data, parityData, parityBlockCount);
 
             VerifyData(expectedData, repairedData);
         }
@@ -133,7 +133,7 @@ namespace DevePar.Tests.ParityGFAlgorithms
             var expectedData = GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength);
 
             var data = GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength);
-            var parityData = ParityGFAlgorithm.GenerateParityData(gfTable, data, parityBlockCount);
+            var parityData = ParityGFAlgorithm.GenerateParityData2(gfTable, data, parityBlockCount);
             var combinedData = data.Concat(parityData).ToList();
 
             combinedData[1].Data = null;
@@ -143,27 +143,12 @@ namespace DevePar.Tests.ParityGFAlgorithms
             combinedData[7].Data = null;
 
 
-            var matrix = ParityGFAlgorithm.CreateParityMatrix(gfTable, expectedData.Count, parityBlockCount);
-            Console.WriteLine($"Matrix: {matrix}");
+            //var matrix = ParityGFAlgorithm.CreateParityMatrix2(gfTable, expectedData.Count, parityBlockCount);
+            //Console.WriteLine($"Matrix: {matrix}");
 
-            //1 0 0 0 0
-            //0 1 0 0 0
-            //0 0 1 0 0
-            //0 0 0 1 0
-            //0 0 0 0 1
-            //1 1 1 1 1
-            //2 4 16 128 29
-            //4 16 29 19 76
-            //8 64 205 117 143
-            //16 29 76 24 157
 
-            var repairedData = ParityGFAlgorithm.RecoverData(gfTable, data, parityData, parityBlockCount);
+            var repairedData = ParityGFAlgorithm.RecoverData2(gfTable, data, parityData, parityBlockCount);
 
-            //1 0 0 0 0
-            //0 0 0 0 1
-            //1 1 1 1 1
-            //8 64 205 117 143
-            //16 29 76 24 157
 
             VerifyData(expectedData, repairedData);
         }
@@ -180,7 +165,7 @@ namespace DevePar.Tests.ParityGFAlgorithms
             var expectedData = GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength);
 
             var data = GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength);
-            var parityData = ParityGFAlgorithm.GenerateParityData(gfTable, data, parityBlockCount);
+            var parityData = ParityGFAlgorithm.GenerateParityData2(gfTable, data, parityBlockCount);
             var combinedData = data.Concat(parityData).ToList();
 
             combinedData[0].Data = null;
@@ -188,10 +173,65 @@ namespace DevePar.Tests.ParityGFAlgorithms
             combinedData[5].Data = null;
 
 
-            var matrix = ParityGFAlgorithm.CreateParityMatrix(gfTable, expectedData.Count, parityBlockCount);
-            Console.WriteLine($"Matrix: {matrix}");
+            //var matrix = ParityGFAlgorithm.CreateParityMatrix(gfTable, expectedData.Count, parityBlockCount);
+            //Console.WriteLine($"Matrix: {matrix}");
 
-            var repairedData = ParityGFAlgorithm.RecoverData(gfTable, data, parityData, parityBlockCount);
+            var repairedData = ParityGFAlgorithm.RecoverData2(gfTable, data, parityData, parityBlockCount);
+
+            VerifyData(expectedData, repairedData);
+        }
+
+        [Fact]
+        public void TestSpecificScenario4()
+        {
+            int dataBlockCount = 5;
+            int parityBlockCount = 5;
+            int dataLength = 1;
+            var gfTable = GFTable.GFTable8;
+
+
+            var expectedData = GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength);
+
+            var data = GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength);
+            var parityData = ParityGFAlgorithm.GenerateParityData2(gfTable, data, parityBlockCount);
+            var combinedData = data.Concat(parityData).ToList();
+
+            combinedData[0].Data = null;
+            combinedData[2].Data = null;
+            combinedData[3].Data = null;
+            combinedData[5].Data = null;
+            combinedData[6].Data = null;
+
+
+            var repairedData = ParityGFAlgorithm.RecoverData2(gfTable, data, parityData, parityBlockCount);
+
+            VerifyData(expectedData, repairedData);
+        }
+
+        [Fact]
+        public void TestSpecificScenario5()
+        {
+            int dataBlockCount = 6;
+            int parityBlockCount = 6;
+            int dataLength = 1;
+            var gfTable = GFTable.GFTable8;
+
+
+            var expectedData = GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength);
+
+            var data = GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength);
+            var parityData = ParityGFAlgorithm.GenerateParityData2(gfTable, data, parityBlockCount);
+            var combinedData = data.Concat(parityData).ToList();
+
+            combinedData[2].Data = null;
+            combinedData[3].Data = null;
+            combinedData[5].Data = null;
+            combinedData[7].Data = null;
+            combinedData[8].Data = null;
+            combinedData[10].Data = null;
+
+
+            var repairedData = ParityGFAlgorithm.RecoverData2(gfTable, data, parityData, parityBlockCount);
 
             VerifyData(expectedData, repairedData);
         }
@@ -211,7 +251,7 @@ namespace DevePar.Tests.ParityGFAlgorithms
                     var toDelete = rowsToDelete[zzz];
 
                     var data = GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength);
-                    var parityData = ParityGFAlgorithm.GenerateParityData(gfTable, data, parityBlockCount);
+                    var parityData = ParityGFAlgorithm.GenerateParityData2(gfTable, data, parityBlockCount);
                     var combinedData = data.Concat(parityData).ToList();
 
                     foreach (var rowToDelete in toDelete)
@@ -224,7 +264,7 @@ namespace DevePar.Tests.ParityGFAlgorithms
 
                     }
 
-                    var repairedData = ParityGFAlgorithm.RecoverData(gfTable, data, parityData, parityBlockCount);
+                    var repairedData = ParityGFAlgorithm.RecoverData2(gfTable, data, parityData, parityBlockCount);
 
                     VerifyData(expectedData, repairedData);
                 }
@@ -335,5 +375,7 @@ namespace DevePar.Tests.ParityGFAlgorithms
 
             //29,43,45,77,95,99,101,105,113,135,141,169,195,207,231,245,285,299
         }
+
+
     }
 }

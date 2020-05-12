@@ -483,7 +483,7 @@ namespace DevePar.LinearAlgebra
                 for (int i = 0; i < rows; i++)
                 {
                     var row = data[i];
-                    var s = row[0];
+                    var s = row[0] * column[0];
                     for (int k = 1; k < size; k++)
                     {
                         s += row[k] * column[k];

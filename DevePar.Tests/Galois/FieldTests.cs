@@ -21,5 +21,21 @@ namespace DevePar.Tests.Galois
                 }
             }
         }
+
+        [Fact]
+        public void TestPow()
+        {
+            var table = GFTable.GFTable8;
+            for (int i = 0; i < 256; i++)
+            {
+                for (int y = 0; y < 256; y++)
+                {
+                    var a = Field.pow(new Field((byte)i), (byte)y);
+                    var b = table.Pow((uint)i, (uint)y);
+
+                    Assert.Equal((int)a, (int)b);
+                }
+            }
+        }
     }
 }
