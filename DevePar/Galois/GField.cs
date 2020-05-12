@@ -23,6 +23,8 @@
 
         public static bool operator !=(GField a, GField b) => a.Value != b.Value;
 
+        public GField Pow(uint power) => Table.CreateField(Table.Pow(Value, power));
+
         public override bool Equals(object obj)
         {
             if (obj == null)

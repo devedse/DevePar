@@ -19,7 +19,7 @@ namespace DevePar.LinearAlgebra
 
             var itemsToSkip = CalcItemsToSkip(gfSize).ToList();
 
-            int end = MathHelper.IntPow(2, (uint)gfSize);
+            int end = MathHelper.IntPow(2, gfSize);
             uint n = 1;
             uint b = 2;
 
