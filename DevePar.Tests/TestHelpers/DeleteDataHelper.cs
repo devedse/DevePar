@@ -3,12 +3,40 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
+using Xunit;
 
 namespace DevePar.Tests.TestHelpers
 {
     public static class DeleteDataHelper
     {
+        [Fact]
+        public static void ShouldGenerateTheRightDeleteData()
+        {
+            int totalBlocks = 30;
+            int dataToDelete = 8;
+         
+
+            var w2 = Stopwatch.StartNew();
+            var set2 = DatasToDelete2(totalBlocks, dataToDelete).ToList();
+            w2.Stop();
+
+            var w1 = Stopwatch.StartNew();
+            var set1 = DatasToDelete(totalBlocks, dataToDelete);
+            w1.Stop();
+
+            Assert.Equal(set1.Count, set2.Count);
+
+            for (int i = 0; i < set2.Count; i++)
+            {
+                var cur = set2[i];
+                var res = set1.Count(t => t.SequenceEqual(cur));
+
+                Assert.Equal(1, res);
+            }
+        }
+
         //public static void DeleteData<T>(IEnumerable<Block<T>> combinedData, int countDataToDelete)
         //{
         //    var datasToDelete = DatasToDelete(combinedData.Count(), countDataToDelete);
@@ -39,6 +67,32 @@ namespace DevePar.Tests.TestHelpers
 
             var res = range.Select(t => new BitArray(new int[] { t })).Where(t => CountTrueInBitArray(t) == countDataToDelete).Select(t => CountPosOfTrueBits(t).ToList()).ToList();
             return res;
+        }
+
+
+
+        public static IEnumerable<List<int>> DatasToDelete2(int totalBlockCount, int countDataToDelete)
+        {
+            return DatasToDelete3(totalBlockCount, countDataToDelete, new List<int>());
+        }
+
+        public static IEnumerable<List<int>> DatasToDelete3(int totalBlockCount, int countDataToDelete, List<int> cur, int depth = 0, int startNumber = 0)
+        {
+            if (cur.Count == countDataToDelete)
+            {
+                return new List<List<int>>() { cur };
+            }
+
+            var allLists = Enumerable.Empty<List<int>>();
+            for (int i = startNumber; i < totalBlockCount - (countDataToDelete - (depth + 1)); i++)
+            {
+                var cloned = new List<int>(cur);
+                cloned.Add(i);
+
+                allLists = allLists.Concat(DatasToDelete3(totalBlockCount, countDataToDelete, cloned, depth + 1, i + 1));
+            }
+
+            return allLists;
         }
 
         private static int CountTrueInBitArray(BitArray t)

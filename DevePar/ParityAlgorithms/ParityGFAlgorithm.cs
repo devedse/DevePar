@@ -301,6 +301,18 @@ namespace DevePar.ParityAlgorithms
             var inverse = subspace.InverseRuben();
             Console.WriteLine($"Inverse:\n\r{inverse}");
 
+            var testje = subspace * inverse;
+
+            var blah = subspace.Data.Select(t => t.Select(z => new Field((byte)z.Value)).ToArray()).ToArray();
+            var mf = new MatrixField(blah);
+            var inversed = mf.Inverse;
+
+            var realInverseData = inversed.Array.Select(t => t.Select(z => gfTable.CreateField((uint)z)).ToArray()).ToArray();
+            var realInverse = new MatrixGField(realInverseData);
+
+
+
+            
 
 
             foreach (var dataBlock in dataBlocks)
