@@ -14,12 +14,12 @@ namespace DevePar.Tests.TestHelpers
         [Fact]
         public static void ShouldGenerateTheRightDeleteData()
         {
-            int totalBlocks = 30;
-            int dataToDelete = 8;
+            int totalBlocks = 15;
+            int dataToDelete = 6;
          
 
             var w2 = Stopwatch.StartNew();
-            var set2 = DatasToDelete2(totalBlocks, dataToDelete).ToList();
+            var set2 = DatasToDeleteOld(totalBlocks, dataToDelete).ToList();
             w2.Stop();
 
             var w1 = Stopwatch.StartNew();
@@ -60,7 +60,7 @@ namespace DevePar.Tests.TestHelpers
             return ret;
         }
 
-        public static List<List<int>> DatasToDelete(int totalBlockCount, int countDataToDelete)
+        public static List<List<int>> DatasToDeleteOld(int totalBlockCount, int countDataToDelete)
         {
             var bitCount = IntPow(2, (uint)totalBlockCount);
             var range = Enumerable.Range(0, bitCount - 1);
@@ -71,12 +71,12 @@ namespace DevePar.Tests.TestHelpers
 
 
 
-        public static IEnumerable<List<int>> DatasToDelete2(int totalBlockCount, int countDataToDelete)
+        public static List<List<int>> DatasToDelete(int totalBlockCount, int countDataToDelete)
         {
-            return DatasToDelete3(totalBlockCount, countDataToDelete, new List<int>());
+            return DatasToDeleteRecursive(totalBlockCount, countDataToDelete, new List<int>()).ToList();
         }
 
-        public static IEnumerable<List<int>> DatasToDelete3(int totalBlockCount, int countDataToDelete, List<int> cur, int depth = 0, int startNumber = 0)
+        public static IEnumerable<List<int>> DatasToDeleteRecursive(int totalBlockCount, int countDataToDelete, List<int> cur, int startNumber = 0)
         {
             if (cur.Count == countDataToDelete)
             {
@@ -84,12 +84,13 @@ namespace DevePar.Tests.TestHelpers
             }
 
             var allLists = Enumerable.Empty<List<int>>();
-            for (int i = startNumber; i < totalBlockCount - (countDataToDelete - (depth + 1)); i++)
+            for (int i = startNumber; i < totalBlockCount - (countDataToDelete - (cur.Count + 1)); i++)
             {
-                var cloned = new List<int>(cur);
+                var cloned = new List<int>(countDataToDelete);
+                cloned.AddRange(cur);
                 cloned.Add(i);
 
-                allLists = allLists.Concat(DatasToDelete3(totalBlockCount, countDataToDelete, cloned, depth + 1, i + 1));
+                allLists = allLists.Concat(DatasToDeleteRecursive(totalBlockCount, countDataToDelete, cloned, i + 1));
             }
 
             return allLists;
