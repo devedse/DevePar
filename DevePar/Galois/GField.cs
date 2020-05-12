@@ -44,5 +44,10 @@
         {
             return unchecked((int)Value);
         }
+
+        public override string ToString()
+        {
+            return Value.ToString();
+        }
     }
 }

@@ -125,13 +125,12 @@ namespace DevePar.ParityAlgorithms
                 }
 
                 var toArray = data.ToArray();
-                var vector = new CoolVectorGField(toArray);
 
-                var parityData = parityMatrix * vector;
+                var parityData = parityMatrix.Multiply(toArray);
 
                 for (int y = 0; y < parityDataList.Count; y++)
                 {
-                    parityDataList[y].Data[i] = (byte)parityData.Data[y].Value;
+                    parityDataList[y].Data[i] = (byte)parityData[y].Value;
                 }
             }
 

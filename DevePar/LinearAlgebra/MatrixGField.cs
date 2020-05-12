@@ -687,7 +687,7 @@ namespace DevePar.LinearAlgebra
             var newData = new GField[this.Rows];
             for (int i = 0; i < this.Rows; i++)
             {
-                var result = Data[i][0];
+                var result = Data[i][0] * right[0];
                 for (int y = 1; y < this.Columns; y++)
                 {
                     result += Data[i][y] * right[y];

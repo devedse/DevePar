@@ -119,7 +119,7 @@ namespace DevePar.Galois
             else
             {
                 var sum = log[a] - log[b];
-                if (sum < 0)
+                if (sum < 0 || sum > Limit)
                 {
                     return antilog[sum + Limit];
                 }
