@@ -15,6 +15,8 @@ namespace DevePar.ConsoleApp
 
             var baseListTest = BaseCalculator.CalcBase(8).ToList();
 
+            var rrrrrr = string.Join($"{Environment.NewLine}", baseListTest);
+
             byte aa = 0;
             aa ^= 0x11D & 0xFF;
             byte ding = 0x11D & 0xFF;
