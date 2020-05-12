@@ -16,14 +16,14 @@ namespace DevePar.Tests.TestHelpers
         {
             int totalBlocks = 15;
             int dataToDelete = 6;
-         
+
 
             var w2 = Stopwatch.StartNew();
-            var set2 = DatasToDeleteOld(totalBlocks, dataToDelete).ToList();
+            var set2 = DetermineAllPermutationsOld(totalBlocks, dataToDelete).ToList();
             w2.Stop();
 
             var w1 = Stopwatch.StartNew();
-            var set1 = DatasToDelete(totalBlocks, dataToDelete);
+            var set1 = DetermineAllPermutations(totalBlocks, dataToDelete);
             w1.Stop();
 
             Assert.Equal(set1.Count, set2.Count);
@@ -60,7 +60,7 @@ namespace DevePar.Tests.TestHelpers
             return ret;
         }
 
-        public static List<List<int>> DatasToDeleteOld(int totalBlockCount, int countDataToDelete)
+        public static List<List<int>> DetermineAllPermutationsOld(int totalBlockCount, int countDataToDelete)
         {
             var bitCount = IntPow(2, (uint)totalBlockCount);
             var range = Enumerable.Range(0, bitCount - 1);
@@ -71,12 +71,12 @@ namespace DevePar.Tests.TestHelpers
 
 
 
-        public static List<List<int>> DatasToDelete(int totalBlockCount, int countDataToDelete)
+        public static List<List<int>> DetermineAllPermutations(int totalBlockCount, int countDataToDelete)
         {
-            return DatasToDeleteRecursive(totalBlockCount, countDataToDelete, new List<int>()).ToList();
+            return DetermineAllPermutationsRecursive(totalBlockCount, countDataToDelete, new List<int>()).ToList();
         }
 
-        public static IEnumerable<List<int>> DatasToDeleteRecursive(int totalBlockCount, int countDataToDelete, List<int> cur, int startNumber = 0)
+        private static IEnumerable<List<int>> DetermineAllPermutationsRecursive(int totalBlockCount, int countDataToDelete, List<int> cur, int startNumber = 0)
         {
             if (cur.Count == countDataToDelete)
             {
@@ -90,7 +90,7 @@ namespace DevePar.Tests.TestHelpers
                 cloned.AddRange(cur);
                 cloned.Add(i);
 
-                allLists = allLists.Concat(DatasToDeleteRecursive(totalBlockCount, countDataToDelete, cloned, i + 1));
+                allLists = allLists.Concat(DetermineAllPermutationsRecursive(totalBlockCount, countDataToDelete, cloned, i + 1));
             }
 
             return allLists;

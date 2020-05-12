@@ -197,7 +197,7 @@ namespace DevePar.Tests.ParityAlgorithms
 
             for (int dataBlocksToDeleteCount = 1; dataBlocksToDeleteCount <= parityBlockCount; dataBlocksToDeleteCount++)
             {
-                var rowsToDelete = DeleteDataHelper.DatasToDelete(dataBlockCount + parityBlockCount, dataBlocksToDeleteCount);
+                var rowsToDelete = DeleteDataHelper.DetermineAllPermutations(dataBlockCount + parityBlockCount, dataBlocksToDeleteCount);
 
                 for (int zzz = 0; zzz < rowsToDelete.Count; zzz++)
                 {
