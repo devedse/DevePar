@@ -11,50 +11,50 @@ namespace DevePar.ParityAlgorithms
     {
         //private const int Base = 2;
 
-        //public static MatrixGField CreateParityMatrix(GFTable gfTable, int dataBlocksCount, int parityBlockCount)
-        //{
-        //    int totalBlocks = dataBlocksCount + parityBlockCount;
-        //    if (totalBlocks > 256)
-        //    {
-        //        throw new InvalidOperationException("A total of more then 256 blocks is not supported");
-        //    }
+        public static MatrixGField CreateParityMatrix(GFTable gfTable, int dataBlocksCount, int parityBlockCount)
+        {
+            int totalBlocks = dataBlocksCount + parityBlockCount;
+            if (totalBlocks > 256)
+            {
+                throw new InvalidOperationException("A total of more then 256 blocks is not supported");
+            }
 
-        //    var identityMatrix = MatrixGField.CreateIdentityMatrix(gfTable, dataBlocksCount);
-        //    var parityOnlyMatrix = CreateParityOnlyMatrix(gfTable, dataBlocksCount, parityBlockCount);
+            var identityMatrix = MatrixGField.CreateIdentityMatrix(gfTable, dataBlocksCount);
+            var parityOnlyMatrix = CreateParityOnlyMatrix(gfTable, dataBlocksCount, parityBlockCount);
 
-        //    var combinedMatrix = identityMatrix.AddRowsAtTheEnd(parityOnlyMatrix);
-        //    return combinedMatrix;
-        //}
-
-
-        //public static MatrixGField CreateParityOnlyMatrix(GFTable gfTable, int dataBlocksCount, int parityBlockCount)
-        //{
-        //    int totalBlocks = dataBlocksCount + parityBlockCount;
-        //    if (totalBlocks > 256)
-        //    {
-        //        throw new InvalidOperationException("A total of more then 256 blocks is not supported");
-        //    }
-
-        //    var parityMatrixArray = new GField[parityBlockCount, dataBlocksCount];
+            var combinedMatrix = identityMatrix.AddRowsAtTheEnd(parityOnlyMatrix);
+            return combinedMatrix;
+        }
 
 
+        public static MatrixGField CreateParityOnlyMatrix(GFTable gfTable, int dataBlocksCount, int parityBlockCount)
+        {
+            int totalBlocks = dataBlocksCount + parityBlockCount;
+            if (totalBlocks > 256)
+            {
+                throw new InvalidOperationException("A total of more then 256 blocks is not supported");
+            }
 
-        //    var baseList = BaseGFCalculator.CalcBase(gfTable).ToList();
-        //    //Copy parity part of the matrix
-        //    for (int column = 0; column < parityMatrixArray.GetLength(1); column++)
-        //    {
-        //        for (uint row = 0; row < parityBlockCount; row++)
-        //        {
-        //            var val = baseList[column].Pow(row + 1);
-        //            parityMatrixArray[row, column] = val;
-        //        }
-        //    }
+            var parityMatrixArray = new GField[parityBlockCount, dataBlocksCount];
 
 
-        //    return new MatrixGField(parityMatrixArray);
-        //}
 
-        public static MatrixGField CreateParityOnlyMatrix2(GFTable gfTable, int dataBlocksCount, int parityBlockCount)
+            var baseList = BaseGFCalculator.CalcBaseGF8(gfTable).ToList();
+            //Copy parity part of the matrix
+            for (uint row = 0; row < parityBlockCount; row++)
+            {
+                for (int column = 0; column < parityMatrixArray.GetLength(1); column++)
+                {
+                    var val = baseList[column].Pow(row + 1);
+                    parityMatrixArray[row, column] = val;
+                }
+            }
+
+
+            return new MatrixGField(parityMatrixArray);
+        }
+
+        public static MatrixGField CreateParityMatrix2(GFTable gfTable, int dataBlocksCount, int parityBlockCount)
         {
             int totalBlocks = dataBlocksCount + parityBlockCount;
             if (totalBlocks > 256)
@@ -69,13 +69,13 @@ namespace DevePar.ParityAlgorithms
             var baseList = BaseGFCalculator.CalcBase3(gfTable).ToList();
             var res = string.Join(",", baseList);
             //Copy parity part of the matrix
-            for (uint row = 0; row < totalBlocks; row++)
+            for (int row = 0; row < totalBlocks; row++)
             {
-                for (int column = 0; column < parityMatrixArray.GetLength(1); column++)
+                for (uint column = 0; column < parityMatrixArray.GetLength(1); column++)
                 {
-                    var val = baseList[column].Pow(row + 1);
+                    var val = baseList[row].Pow(column + 1);
                     //var val = gfTable.CreateField(gfTable.Pow(2, gfTable.Mul(row, column)));
-                    //var val = baseList[column].Pow(gfTable.Mul(row, (uint)column));
+                    //var val = baseList[row].Pow(gfTable.Mul(row, (uint)column));
                     parityMatrixArray[row, column] = val;
                 }
             }
@@ -128,7 +128,7 @@ namespace DevePar.ParityAlgorithms
         {
             int dataLengthInsideBlock = dataBlocks.First().Data.Length;
 
-            var parityMatrix = CreateParityOnlyMatrix2(gfTable, dataBlocks.Count, parityBlockCount);
+            var parityMatrix = CreateParityMatrix2(gfTable, dataBlocks.Count, parityBlockCount);
 
             var parityDataList = new List<Block<byte>>();
             for (int i = 0; i < parityBlockCount; i++)
@@ -260,7 +260,7 @@ namespace DevePar.ParityAlgorithms
             int dataLengthInsideBlock = combinedData.First(t => t.Data != null).Data.Length;
 
 
-            var parMatrix = CreateParityOnlyMatrix2(gfTable, dataBlocks.Count, parityBlockCount);
+            var parMatrix = CreateParityMatrix2(gfTable, dataBlocks.Count, parityBlockCount);
             //var parMatrixOnly = CreateParityOnlyMatrix(dataBlocks, parityBlockCount);
 
 

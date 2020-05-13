@@ -9,6 +9,15 @@ namespace DevePar.LinearAlgebra
 {
     class BaseGFCalculator
     {
+
+        public static IEnumerable<GField> CalcBaseGF8(GFTable gfTable)
+        {
+            for (uint i = 1; i < gfTable.Limit; i++)
+            {
+                yield return gfTable.CreateField(i);
+            }
+        }
+
         public static IEnumerable<GField> CalcBase(GFTable gfTable)
         {
             var gfSize = (uint)gfTable.Power;
