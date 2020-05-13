@@ -599,10 +599,20 @@ namespace DevePar.LinearAlgebra
             for (var r = 0; r < n; r++)
             {
                 var factor = M[r, r];
+                if (factor.Value == 0)
+                {
+                    throw new Exception("Matrix is not invertible");
+                }
+
                 for (var c = 0; c < n; c++)
                 {
                     M[r, c] /= factor;
                     I[r, c] /= factor;
+
+                    if (r != c && M[r, c].Value != 0)
+                    {
+                        throw new Exception("Matrix is not invertible");
+                    }
                 }
             }
         }

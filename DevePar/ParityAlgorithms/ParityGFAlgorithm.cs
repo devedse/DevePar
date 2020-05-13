@@ -73,7 +73,9 @@ namespace DevePar.ParityAlgorithms
             {
                 for (int column = 0; column < parityMatrixArray.GetLength(1); column++)
                 {
-                    var val = baseList[column].Pow(row);
+                    var val = baseList[column].Pow(row + 1);
+                    //var val = gfTable.CreateField(gfTable.Pow(2, gfTable.Mul(row, column)));
+                    //var val = baseList[column].Pow(gfTable.Mul(row, (uint)column));
                     parityMatrixArray[row, column] = val;
                 }
             }
@@ -313,7 +315,7 @@ namespace DevePar.ParityAlgorithms
 
 
 
-            
+
 
 
             foreach (var dataBlock in dataBlocks)
