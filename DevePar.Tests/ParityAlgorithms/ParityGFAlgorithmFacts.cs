@@ -240,8 +240,8 @@ namespace DevePar.Tests.ParityGFAlgorithms
         [Fact]
         public void TestSpecificScenario6()
         {
-            int dataBlockCount = 3;
-            int parityBlockCount = 3;
+            int dataBlockCount = 2;
+            int parityBlockCount = 2;
             int dataLength = 1;
             var gfTable = GFTable.GFTable8;
 
@@ -249,18 +249,17 @@ namespace DevePar.Tests.ParityGFAlgorithms
             var expectedData = GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength);
 
             var data = GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength);
-            var parityData = ParityGFAlgorithm.GenerateParityData2(gfTable, data, parityBlockCount);
+            var parityData = ParityGFAlgorithm.GenerateParityData3(gfTable, data, parityBlockCount);
             var combinedData = data.Concat(parityData).ToList();
 
             combinedData[0].Data = null;
-            combinedData[2].Data = null;
-            combinedData[5].Data = null;
+            combinedData[1].Data = null;
 
 
             //var matrix = ParityGFAlgorithm.CreateParityMatrix(gfTable, expectedData.Count, parityBlockCount);
             //Console.WriteLine($"Matrix: {matrix}");
 
-            var repairedData = ParityGFAlgorithm.RecoverData2(gfTable, data, parityData, parityBlockCount);
+            var repairedData = ParityGFAlgorithm.RecoverData3(gfTable, data, parityData, parityBlockCount);
 
             VerifyData(expectedData, repairedData);
         }
