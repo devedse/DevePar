@@ -61,6 +61,38 @@ namespace DevePar.LinearAlgebra
             }
         }
 
+        public static IEnumerable<GField> CalcBase3(GFTable gfTable)
+        {
+            uint logbase = 0;
+
+            var table = GFTable.GFTable8;
+            var limit = table.Limit;
+
+            var allValues = new List<GField>();
+
+            uint count = 500;
+            for (uint index = 0; index < count; index++)
+            {
+
+                // Determine the next useable base value.
+                // Its log must must be relatively prime to 65535
+                while (GCD(limit, logbase) != 1)
+                {
+                    logbase++;
+                }
+                if (logbase >= limit)
+                {
+                    return allValues;
+                    //throw new Exception("ERRORRR");
+                }
+                var gfieldValue = table.Alog(logbase++);
+                var gfield = table.CreateField(gfieldValue);
+                allValues.Add(gfield);
+                Console.WriteLine(gfield);
+            }
+            return null;
+        }
+
         public static IEnumerable<int> CalcItemsToSkip(uint gfSize)
         {
             if (gfSize > 0 && !IsPowerOfTwo(gfSize))
@@ -80,6 +112,30 @@ namespace DevePar.LinearAlgebra
         private static bool IsPowerOfTwo(uint x)
         {
             return (x != 0) && ((x & (x - 1)) == 0);
+        }
+
+        public static uint GCD(uint a, uint b)
+        {
+            if (a != 0 && b != 0)
+            {
+                while (a != 0 && b != 0)
+                {
+                    if (a > b)
+                    {
+                        a = a % b;
+                    }
+                    else
+                    {
+                        b = b % a;
+                    }
+                }
+
+                return a + b;
+            }
+            else
+            {
+                return 0;
+            }
         }
     }
 }

@@ -66,7 +66,8 @@ namespace DevePar.ParityAlgorithms
 
 
 
-            var baseList = BaseGFCalculator.CalcBase2(gfTable).ToList();
+            var baseList = BaseGFCalculator.CalcBase3(gfTable).ToList();
+            var res = string.Join(",", baseList);
             //Copy parity part of the matrix
             for (uint row = 0; row < totalBlocks; row++)
             {

@@ -21,6 +21,8 @@ namespace DevePar.Galois
         private static uint[] antilog;
         private static uint[] log;
 
+        public uint Alog(uint value) => antilog[value];
+
         public GFTable(int power, uint polynomial)
         {
             Power = power;
