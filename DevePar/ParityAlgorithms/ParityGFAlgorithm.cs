@@ -219,7 +219,7 @@ namespace DevePar.ParityAlgorithms
                 // One column for each present data block
                 for (uint col = 0; col < datapresent; col++)
                 {
-                    leftmatrix[row, col] = database[datapresentindex[col]].Pow(exponent);
+                    leftmatrix[row, col] = database[datapresentindex[col]].Pow((uint)parpresentindex[row]);
                 }
                 // One column for each each present recovery block that will be used for a missing data block
                 for (uint col = 0; col < datamissing; col++)
@@ -232,7 +232,7 @@ namespace DevePar.ParityAlgorithms
                     // One column for each missing data block
                     for (uint col = 0; col < datamissing; col++)
                     {
-                        rightmatrix[row, col] = database[datamissingindex[col]].Pow(exponent);
+                        rightmatrix[row, col] = database[datamissingindex[col]].Pow((uint)parpresentindex[row]);
                     }
                     // One column for each missing recovery block
                     for (uint col = 0; col < parmissing; col++)
@@ -258,7 +258,7 @@ namespace DevePar.ParityAlgorithms
                 // One column for each present data block
                 for (uint col = 0; col < datapresent; col++)
                 {
-                    leftmatrix[(row + datamissing), col] = database[datapresentindex[col]].Pow(exponent);
+                    leftmatrix[(row + datamissing), col] = database[datapresentindex[col]].Pow((uint)parmissingindex[row]);
                 }
                 // One column for each each present recovery block that will be used for a missing data block
                 for (uint col = 0; col < datamissing; col++)
@@ -271,7 +271,7 @@ namespace DevePar.ParityAlgorithms
                     // One column for each missing data block
                     for (uint col = 0; col < datamissing; col++)
                     {
-                        rightmatrix[(row + datamissing), col] = database[datamissingindex[col]].Pow(exponent);
+                        rightmatrix[(row + datamissing), col] = database[datamissingindex[col]].Pow((uint)parmissingindex[row]);
                     }
                     // One column for each missing recovery block
                     for (uint col = 0; col < parmissing; col++)
@@ -668,28 +668,20 @@ namespace DevePar.ParityAlgorithms
         {
             var combinedData = dataBlocks.Concat(recoveryBlocks).ToList();
             var combinedDataWithoutMissingData = combinedData.Where(t => t.Data != null).ToList();
+            var combinedDataWithMissingData = combinedData.Where(t => t.Data == null).ToList();
             int dataLengthInsideBlock = combinedData.First(t => t.Data != null).Data.Length;
 
             var recoveryMatrixDing = CreateParityMatrixForRecovery(gfTable, dataBlocks, recoveryBlocks);
 
-            var missingDataElements = new List<int>();
-            var missingRows = new List<GField[]>();
-            var nonMissingRows = new List<GField[]>();
 
 
 
-            if (missingDataElements.Count > parityBlockCount)
+
+            foreach (var block in combinedDataWithMissingData)
             {
-                throw new InvalidOperationException("Can't recover this data as too much blocks are damaged");
-            }
-
-
-
-            foreach (var dataBlock in dataBlocks)
-            {
-                if (dataBlock.Data == null)
+                if (block.Data == null)
                 {
-                    dataBlock.Data = new byte[dataLengthInsideBlock];
+                    block.Data = new byte[dataLengthInsideBlock];
                 }
             }
 
@@ -715,7 +707,7 @@ namespace DevePar.ParityAlgorithms
                 //Console.WriteLine($"Recovered data:\n\r{res}");
                 for (int y = 0; y < res.Length; y++)
                 {
-                    dataBlocks[y].Data[i] = (byte)res[y].Value;
+                    combinedDataWithMissingData[y].Data[i] = (byte)res[y].Value;
                 }
             }
 
