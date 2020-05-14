@@ -3,6 +3,7 @@ using DevePar.ParityAlgorithms;
 using DevePar.Tests.TestHelpers;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
@@ -240,8 +241,8 @@ namespace DevePar.Tests.ParityGFAlgorithms
         [Fact]
         public void TestSpecificScenario6()
         {
-            int dataBlockCount = 20;
-            int parityBlockCount = 8;
+            int dataBlockCount = 2;
+            int parityBlockCount = 2;
             int dataLength = 1;
             var gfTable = GFTable.GFTable8;
 
@@ -265,10 +266,10 @@ namespace DevePar.Tests.ParityGFAlgorithms
         }
 
         [Fact]
-        public void TestSpecificScenarioHuge()
+        public void TestSpecificScenario7()
         {
-            int dataBlockCount = 128;
-            int parityBlockCount = 128;
+            int dataBlockCount = 4;
+            int parityBlockCount = 4;
             int dataLength = 1;
             var gfTable = GFTable.GFTable8;
 
@@ -276,19 +277,57 @@ namespace DevePar.Tests.ParityGFAlgorithms
             var expectedData = GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength);
 
             var data = GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength);
-            var parityData = ParityGFAlgorithm.GenerateParityData2(gfTable, data, parityBlockCount);
+            var parityData = ParityGFAlgorithm.GenerateParityData3(gfTable, data, parityBlockCount);
             var combinedData = data.Concat(parityData).ToList();
 
-            var r = new Random(4238392);
-            while (combinedData.Count(t => t.Data == null) < 128)
-            {
-                combinedData[r.Next(combinedData.Count)] = null;
-            }
+            combinedData[0].Data = null;
+            combinedData[1].Data = null;
+            combinedData[2].Data = null;
+            combinedData[6].Data = null;
 
 
-            var repairedData = ParityGFAlgorithm.RecoverData2(gfTable, data, parityData, parityBlockCount);
+            //var matrix = ParityGFAlgorithm.CreateParityMatrix(gfTable, expectedData.Count, parityBlockCount);
+            //Console.WriteLine($"Matrix: {matrix}");
+
+            var repairedData = ParityGFAlgorithm.RecoverData3(gfTable, data, parityData, parityBlockCount);
 
             VerifyData(expectedData, repairedData);
+        }
+
+        [Fact]
+        public void TestSpecificScenarioHuge()
+        {
+            int dataBlockCount = 64;
+            int parityBlockCount = 64;
+            int dataLength = 1;
+            var gfTable = GFTable.GFTable8;
+
+
+
+
+            Parallel.For(0, 1000, new ParallelOptions() { MaxDegreeOfParallelism = 32 }, (i) =>
+            //for (int i = 0; i < 100; i++)
+            {
+                var expectedData = GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength);
+
+                var data = GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength);
+                var parityData = ParityGFAlgorithm.GenerateParityData2(gfTable, data, parityBlockCount);
+                var combinedData = data.Concat(parityData).ToList();
+
+                var r = new Random(i);
+
+                combinedData.Shuffle(r);
+                for (int y = 0; y < parityBlockCount; y++)
+                {
+                    combinedData[y].Data = null;
+                }
+
+
+                var repairedData = ParityGFAlgorithm.RecoverData2(gfTable, data, parityData, parityBlockCount);
+
+                VerifyData(expectedData, repairedData);
+            }
+            );
         }
 
         private static void RunRepairTest(GFTable gfTable, int dataBlockCount, int parityBlockCount, int dataLength)
@@ -308,7 +347,7 @@ namespace DevePar.Tests.ParityGFAlgorithms
                         var toDelete = rowsToDelete[zzz];
 
                         var data = GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength);
-                        var parityData = ParityGFAlgorithm.GenerateParityData2(gfTable, data, parityBlockCount);
+                        var parityData = ParityGFAlgorithm.GenerateParityData3(gfTable, data, parityBlockCount);
                         var combinedData = data.Concat(parityData).ToList();
 
                         foreach (var rowToDelete in toDelete)
@@ -316,7 +355,7 @@ namespace DevePar.Tests.ParityGFAlgorithms
                             combinedData[rowToDelete].Data = null;
                         }
 
-                        var repairedData = ParityGFAlgorithm.RecoverData2(gfTable, data, parityData, parityBlockCount);
+                        var repairedData = ParityGFAlgorithm.RecoverData3(gfTable, data, parityData, parityBlockCount);
 
                         VerifyData(expectedData, repairedData);
                     }
@@ -430,6 +469,15 @@ namespace DevePar.Tests.ParityGFAlgorithms
             //29,43,45,77,95,99,101,105,113,135,141,169,195,207,231,245,285,299
         }
 
+        [Fact]
+        public void WriteTestFiles()
+        {
+            var data = GenerateTestDataHelper.GenerateTestData(4, 1);
+            for (int i = 0; i < data.Count; i++)
+            {
+                File.WriteAllBytes($"{i}.txt", new byte[] { data[i].Data[0] });
+            }
+        }
 
     }
 }
