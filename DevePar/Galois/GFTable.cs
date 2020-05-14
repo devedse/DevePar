@@ -18,8 +18,8 @@ namespace DevePar.Galois
         public int Power { get; }
         public uint Polynomial { get; }
 
-        private static uint[] antilog;
-        private static uint[] log;
+        private uint[] antilog;
+        private uint[] log;
 
         public uint Alog(uint value) => antilog[value];
 

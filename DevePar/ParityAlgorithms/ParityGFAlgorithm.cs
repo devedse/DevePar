@@ -39,7 +39,7 @@ namespace DevePar.ParityAlgorithms
 
 
 
-            var baseList = BaseGFCalculator.CalcBaseGF8(gfTable).ToList();
+            var baseList = BaseGFCalculator.CalculateBase(gfTable).ToList();
             //Copy parity part of the matrix
             for (uint row = 0; row < parityBlockCount; row++)
             {
@@ -66,7 +66,7 @@ namespace DevePar.ParityAlgorithms
 
 
 
-            var baseList = BaseGFCalculator.CalcBase3(gfTable).ToList();
+            var baseList = BaseGFCalculator.CalculateBase(gfTable).ToList();
             var res = string.Join(",", baseList);
             //Copy parity part of the matrix
             for (int row = 0; row < totalBlocks; row++)
@@ -124,7 +124,7 @@ namespace DevePar.ParityAlgorithms
         //    return parityDataList;
         //}
 
-        public static MatrixGField CreateParityMatrixForRecovery(GFTable gfTable, List<Block<byte>> dataBlocks, List<Block<byte>> parityBlocks)
+        public static MatrixGField CreateParityMatrixForRecovery<T>(GFTable gfTable, List<Block<T>> dataBlocks, List<Block<T>> parityBlocks)
         {
 
 
@@ -205,7 +205,7 @@ namespace DevePar.ParityAlgorithms
             var combinedData = dataBlocks.Concat(parityBlocks).ToList();
             int outputrow = 0;
 
-            var database = BaseGFCalculator.CalcBaseGF8(gfTable).ToList();
+            var database = BaseGFCalculator.CalculateBase(gfTable).ToList();
 
             for (uint row = 0; row < datamissing; row++)
             {
@@ -419,24 +419,32 @@ namespace DevePar.ParityAlgorithms
         }
 
 
-
-
         public static List<Block<byte>> GenerateParityData3(GFTable gfTable, List<Block<byte>> dataBlocks, int parityBlockCount)
+        {
+            var dataBlocks2 = dataBlocks.Select(t => new Block<uint>() { Data = t.Data.Select(z => (uint)z).ToArray() }).ToList();
+
+            var result = GenerateParityData3(GFTable.GFTable16, dataBlocks2, parityBlockCount);
+
+            var result2 = result.Select(t => new Block<byte>() { Data = t.Data.Select(z => (byte)z).ToArray() }).ToList();
+            return result2;
+        }
+
+        public static List<Block<uint>> GenerateParityData3(GFTable gfTable, List<Block<uint>> dataBlocks, int parityBlockCount)
         {
             int dataLengthInsideBlock = dataBlocks.First().Data.Length;
 
-            var parityDataList = new List<Block<byte>>();
+            var parityDataList = new List<Block<uint>>();
             for (int i = 0; i < parityBlockCount; i++)
             {
-                parityDataList.Add(new Block<byte>() { Data = null });
+                parityDataList.Add(new Block<uint>() { Data = null });
             }
 
             var parityMatrix = CreateParityMatrixForRecovery(gfTable, dataBlocks, parityDataList);
 
-            parityDataList = new List<Block<byte>>();
+            parityDataList = new List<Block<uint>>();
             for (int i = 0; i < parityBlockCount; i++)
             {
-                parityDataList.Add(new Block<byte>() { Data = new byte[dataLengthInsideBlock] });
+                parityDataList.Add(new Block<uint>() { Data = new uint[dataLengthInsideBlock] });
             }
 
             for (int i = 0; i < dataLengthInsideBlock; i++)
@@ -455,7 +463,7 @@ namespace DevePar.ParityAlgorithms
 
                 for (int y = 0; y < parityDataList.Count; y++)
                 {
-                    parityDataList[y].Data[i] = (byte)parityData[y].Value;
+                    parityDataList[y].Data[i] = parityData[y].Value;
                 }
             }
 
@@ -661,10 +669,19 @@ namespace DevePar.ParityAlgorithms
             return dataBlocks;
         }
 
-
-
-
         public static List<Block<byte>> RecoverData3(GFTable gfTable, List<Block<byte>> dataBlocks, List<Block<byte>> recoveryBlocks, int parityBlockCount)
+        {
+            var dataBlocks2 = dataBlocks.Select(t => new Block<uint>() { Data = t.Data?.Select(z => (uint)z).ToArray() }).ToList();
+            var recoveryBlocks2 = recoveryBlocks.Select(t => new Block<uint>() { Data = t.Data?.Select(z => (uint)z).ToArray() }).ToList();
+
+            var result = RecoverData3(GFTable.GFTable16, dataBlocks2, recoveryBlocks2, parityBlockCount);
+
+            var result2 = result.Select(t => new Block<byte>() { Data = t.Data.Select(z => (byte)z).ToArray() }).ToList();
+            return result2;
+        }
+
+
+        public static List<Block<uint>> RecoverData3(GFTable gfTable, List<Block<uint>> dataBlocks, List<Block<uint>> recoveryBlocks, int parityBlockCount)
         {
             var combinedData = dataBlocks.Concat(recoveryBlocks).ToList();
             var combinedDataWithoutMissingData = combinedData.Where(t => t.Data != null).ToList();
@@ -681,7 +698,7 @@ namespace DevePar.ParityAlgorithms
             {
                 if (block.Data == null)
                 {
-                    block.Data = new byte[dataLengthInsideBlock];
+                    block.Data = new uint[dataLengthInsideBlock];
                 }
             }
 

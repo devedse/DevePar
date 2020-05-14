@@ -294,6 +294,38 @@ namespace DevePar.Tests.ParityGFAlgorithms
             VerifyData(expectedData, repairedData);
         }
 
+
+        [Fact]
+        public void TestSpecificScenario8()
+        {
+            int dataBlockCount = 2;
+            int parityBlockCount = 2;
+            int dataLength = 1;
+            var gfTable = GFTable.GFTable8;
+
+
+            var expectedData = GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength);
+
+            var data = GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength);
+            var parityData = ParityGFAlgorithm.GenerateParityData3(gfTable, data, parityBlockCount);
+            var parityData2 = ParityGFAlgorithm.GenerateParityData2(gfTable, data, parityBlockCount);
+            var combinedData = data.Concat(parityData).ToList();
+            
+
+            combinedData[0].Data = null;
+            combinedData[1].Data = null;
+
+
+            //var matrix = ParityGFAlgorithm.CreateParityMatrix(gfTable, expectedData.Count, parityBlockCount);
+            //Console.WriteLine($"Matrix: {matrix}");
+
+            var repairedData = ParityGFAlgorithm.RecoverData3(gfTable, data, parityData, parityBlockCount);
+            var repairedData2 = ParityGFAlgorithm.RecoverData2(gfTable, data, parityData, parityBlockCount);
+
+            VerifyData(expectedData, repairedData);
+            VerifyData(expectedData, repairedData2);
+        }
+
         [Fact]
         public void TestSpecificScenarioHuge()
         {
@@ -340,8 +372,8 @@ namespace DevePar.Tests.ParityGFAlgorithms
             {
                 var rowsToDelete = DeleteDataHelper.DetermineAllPermutations(dataBlockCount + parityBlockCount, dataBlocksToDeleteCount);
 
-                //for (int zzz = 0; zzz < rowsToDelete.Count; zzz++)
-                Parallel.For(0, rowsToDelete.Count, new ParallelOptions() { MaxDegreeOfParallelism = 32 }, (zzz) =>
+                for (int zzz = 0; zzz < rowsToDelete.Count; zzz++)
+                //Parallel.For(0, rowsToDelete.Count, new ParallelOptions() { MaxDegreeOfParallelism = 32 }, (zzz) =>
                 {
                     {
                         var toDelete = rowsToDelete[zzz];
@@ -360,7 +392,7 @@ namespace DevePar.Tests.ParityGFAlgorithms
                         VerifyData(expectedData, repairedData);
                     }
                 }
-                );
+                //);
             }
         }
 

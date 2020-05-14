@@ -7,10 +7,23 @@ using System.Text;
 
 namespace DevePar.LinearAlgebra
 {
-    class BaseGFCalculator
+    public static class BaseGFCalculator
     {
+        public static IEnumerable<GField> CalculateBase(GFTable gfTable)
+        {
+            if (gfTable.Power == 8)
+            {
+                return CalcBaseGF8(gfTable);
+            }
+            else if (gfTable.Power == 16)
+            {
+                return CalcBase3(gfTable);
+            }
+            throw new InvalidOperationException("This GFTable type is not supported");
+        }
 
-        public static IEnumerable<GField> CalcBaseGF8(GFTable gfTable)
+
+        private static IEnumerable<GField> CalcBaseGF8(GFTable gfTable)
         {
             for (uint i = 1; i < gfTable.Limit; i++)
             {
@@ -18,7 +31,7 @@ namespace DevePar.LinearAlgebra
             }
         }
 
-        public static IEnumerable<GField> CalcBase(GFTable gfTable)
+        private static IEnumerable<GField> CalcBase(GFTable gfTable)
         {
             var gfSize = (uint)gfTable.Power;
             if (gfSize > 0 && !IsPowerOfTwo(gfSize))
@@ -45,7 +58,7 @@ namespace DevePar.LinearAlgebra
             }
         }
 
-        public static IEnumerable<GField> CalcBase2(GFTable gfTable)
+        private static IEnumerable<GField> CalcBase2(GFTable gfTable)
         {
             var gfSize = (uint)gfTable.Power;
             if (gfSize > 0 && !IsPowerOfTwo(gfSize))
@@ -70,17 +83,13 @@ namespace DevePar.LinearAlgebra
             }
         }
 
-        public static IEnumerable<GField> CalcBase3(GFTable gfTable)
+        private static IEnumerable<GField> CalcBase3(GFTable gfTable)
         {
             uint logbase = 0;
 
-            var table = GFTable.GFTable8;
-            var limit = table.Limit;
+            var limit = gfTable.Limit;
 
-            var allValues = new List<GField>();
-
-            uint count = 500;
-            for (uint index = 0; index < count; index++)
+            while (true)
             {
 
                 // Determine the next useable base value.
@@ -91,18 +100,16 @@ namespace DevePar.LinearAlgebra
                 }
                 if (logbase >= limit)
                 {
-                    return allValues;
-                    //throw new Exception("ERRORRR");
+                    break;
                 }
-                var gfieldValue = table.Alog(logbase++);
-                var gfield = table.CreateField(gfieldValue);
-                allValues.Add(gfield);
-                Console.WriteLine(gfield);
+                var gfieldValue = gfTable.Alog(logbase++);
+                var gfield = gfTable.CreateField(gfieldValue);
+
+                yield return gfield;
             }
-            return null;
         }
 
-        public static IEnumerable<int> CalcItemsToSkip(uint gfSize)
+        private static IEnumerable<int> CalcItemsToSkip(uint gfSize)
         {
             if (gfSize > 0 && !IsPowerOfTwo(gfSize))
             {
