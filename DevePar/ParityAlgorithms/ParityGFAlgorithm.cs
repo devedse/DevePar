@@ -214,7 +214,7 @@ namespace DevePar.ParityAlgorithms
                 {
                     outputrow++;
                 }
-                var exponent = (uint)outputrow + 1;
+                var exponent = (uint)outputrow;
 
                 // One column for each present data block
                 for (uint col = 0; col < datapresent; col++)
@@ -253,7 +253,7 @@ namespace DevePar.ParityAlgorithms
                 {
                     outputrow++;
                 }
-                var exponent = (uint)outputrow + 1;
+                var exponent = (uint)outputrow;
 
                 // One column for each present data block
                 for (uint col = 0; col < datapresent; col++)
@@ -418,16 +418,7 @@ namespace DevePar.ParityAlgorithms
             return parityDataList;
         }
 
-
-        public static List<Block<byte>> GenerateParityData3(GFTable gfTable, List<Block<byte>> dataBlocks, int parityBlockCount)
-        {
-            var dataBlocks2 = dataBlocks.Select(t => new Block<uint>() { Data = t.Data.Select(z => (uint)z).ToArray() }).ToList();
-
-            var result = GenerateParityData3(GFTable.GFTable16, dataBlocks2, parityBlockCount);
-
-            var result2 = result.Select(t => new Block<byte>() { Data = t.Data.Select(z => (byte)z).ToArray() }).ToList();
-            return result2;
-        }
+      
 
         public static List<Block<uint>> GenerateParityData3(GFTable gfTable, List<Block<uint>> dataBlocks, int parityBlockCount)
         {
@@ -668,18 +659,6 @@ namespace DevePar.ParityAlgorithms
 
             return dataBlocks;
         }
-
-        public static List<Block<byte>> RecoverData3(GFTable gfTable, List<Block<byte>> dataBlocks, List<Block<byte>> recoveryBlocks, int parityBlockCount)
-        {
-            var dataBlocks2 = dataBlocks.Select(t => new Block<uint>() { Data = t.Data?.Select(z => (uint)z).ToArray() }).ToList();
-            var recoveryBlocks2 = recoveryBlocks.Select(t => new Block<uint>() { Data = t.Data?.Select(z => (uint)z).ToArray() }).ToList();
-
-            var result = RecoverData3(GFTable.GFTable16, dataBlocks2, recoveryBlocks2, parityBlockCount);
-
-            var result2 = result.Select(t => new Block<byte>() { Data = t.Data.Select(z => (byte)z).ToArray() }).ToList();
-            return result2;
-        }
-
 
         public static List<Block<uint>> RecoverData3(GFTable gfTable, List<Block<uint>> dataBlocks, List<Block<uint>> recoveryBlocks, int parityBlockCount)
         {

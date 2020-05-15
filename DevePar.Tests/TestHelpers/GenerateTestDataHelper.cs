@@ -1,11 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace DevePar.Tests.TestHelpers
 {
     public static class GenerateTestDataHelper
     {
+        public static List<Block<uint>> ConvertToUint(List<Block<byte>> data)
+        {
+            return data.Select(t => new Block<uint>() { Data = t.Data?.Select(z => (uint)z).ToArray() }).ToList();
+        }
+
         public static List<Block<byte>> GenerateTestData(int dataBlocks, int dataLength)
         {
             //The reason this functions fills arrays per data byte is because with this random seed I now get some data I know
