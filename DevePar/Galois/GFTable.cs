@@ -11,7 +11,7 @@ namespace DevePar.Galois
         public static GFTable GFTable8 => GFTable8Lazy.Value;
         private static Lazy<GFTable> GFTable8Lazy { get; } = new Lazy<GFTable>(() => new GFTable(8, 0x11D));
         public static GFTable GFTable16 => GFTable16Lazy.Value;
-        private static Lazy<GFTable> GFTable16Lazy { get; } = new Lazy<GFTable>(() => new GFTable(16, 0x1100D));
+        private static Lazy<GFTable> GFTable16Lazy { get; } = new Lazy<GFTable>(() => new GFTable(16, 0x1100B));
 
         public uint Size { get; }
         public uint Limit { get; }
@@ -40,7 +40,7 @@ namespace DevePar.Galois
             antilog[Limit] = 0;
 
             uint mask = 1;
-            for (uint depth = 0; depth < Size; depth++)
+            for (uint depth = 0; depth < Limit; depth++)
             {
                 log[mask] = depth;
                 antilog[depth] = mask;
