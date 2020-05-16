@@ -12,13 +12,14 @@ namespace DevePar.Tests.ParityGFAlgorithms
 {
     public class ParityGFAlgorithmFacts
     {
+        private static readonly GFTable gfTable = GFTable.GFTable16;
+
         [Fact]
         public void RestoresMissingDataForDataLength1()
         {
             int dataBlockCount = 5;
             int parityBlockCount = 2;
             int dataLength = 1;
-            var gfTable = GFTable.GFTable16;
             RunRepairTest(gfTable, dataBlockCount, parityBlockCount, dataLength);
         }
 
@@ -28,7 +29,6 @@ namespace DevePar.Tests.ParityGFAlgorithms
             int dataBlockCount = 5;
             int parityBlockCount = 2;
             int dataLength = 5000;
-            var gfTable = GFTable.GFTable16;
             RunRepairTest(gfTable, dataBlockCount, parityBlockCount, dataLength);
         }
 
@@ -38,7 +38,6 @@ namespace DevePar.Tests.ParityGFAlgorithms
             int dataBlockCount = 2;
             int parityBlockCount = 2;
             int dataLength = 1;
-            var gfTable = GFTable.GFTable16;
             RunRepairTest(gfTable, dataBlockCount, parityBlockCount, dataLength);
         }
 
@@ -48,7 +47,6 @@ namespace DevePar.Tests.ParityGFAlgorithms
             int dataBlockCount = 3;
             int parityBlockCount = 3;
             int dataLength = 1;
-            var gfTable = GFTable.GFTable16;
             RunRepairTest(gfTable, dataBlockCount, parityBlockCount, dataLength);
         }
 
@@ -58,7 +56,6 @@ namespace DevePar.Tests.ParityGFAlgorithms
             int dataBlockCount = 4;
             int parityBlockCount = 4;
             int dataLength = 1;
-            var gfTable = GFTable.GFTable16;
             RunRepairTest(gfTable, dataBlockCount, parityBlockCount, dataLength);
         }
 
@@ -68,7 +65,6 @@ namespace DevePar.Tests.ParityGFAlgorithms
             int dataBlockCount = 5;
             int parityBlockCount = 5;
             int dataLength = 1;
-            var gfTable = GFTable.GFTable16;
             RunRepairTest(gfTable, dataBlockCount, parityBlockCount, dataLength);
         }
 
@@ -76,7 +72,6 @@ namespace DevePar.Tests.ParityGFAlgorithms
         public void RestoresMissingDataForDataForUltraTest()
         {
             int dataLength = 1;
-            var gfTable = GFTable.GFTable16;
 
             int maxDataBlocksToTest = 8;
 
@@ -108,8 +103,6 @@ namespace DevePar.Tests.ParityGFAlgorithms
             int dataBlockCount = 5;
             int parityBlockCount = 5;
             int dataLength = 1;
-            var gfTable = GFTable.GFTable16;
-
 
             var expectedData = GenerateTestDataHelper.ConvertToUint(GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength));
 
@@ -139,7 +132,6 @@ namespace DevePar.Tests.ParityGFAlgorithms
             int dataBlockCount = 5;
             int parityBlockCount = 5;
             int dataLength = 1;
-            var gfTable = GFTable.GFTable16;
 
 
             var expectedData = GenerateTestDataHelper.ConvertToUint(GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength));
@@ -171,7 +163,6 @@ namespace DevePar.Tests.ParityGFAlgorithms
             int dataBlockCount = 5;
             int parityBlockCount = 3;
             int dataLength = 1;
-            var gfTable = GFTable.GFTable16;
 
 
             var expectedData = GenerateTestDataHelper.ConvertToUint(GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength));
@@ -199,7 +190,6 @@ namespace DevePar.Tests.ParityGFAlgorithms
             int dataBlockCount = 5;
             int parityBlockCount = 5;
             int dataLength = 1;
-            var gfTable = GFTable.GFTable16;
 
 
             var expectedData = GenerateTestDataHelper.ConvertToUint(GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength));
@@ -226,7 +216,6 @@ namespace DevePar.Tests.ParityGFAlgorithms
             int dataBlockCount = 6;
             int parityBlockCount = 6;
             int dataLength = 1;
-            var gfTable = GFTable.GFTable16;
 
 
             var expectedData = GenerateTestDataHelper.ConvertToUint(GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength));
@@ -254,7 +243,6 @@ namespace DevePar.Tests.ParityGFAlgorithms
             int dataBlockCount = 2;
             int parityBlockCount = 2;
             int dataLength = 1;
-            var gfTable = GFTable.GFTable16;
 
 
             var expectedData = GenerateTestDataHelper.ConvertToUint(GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength));
@@ -281,7 +269,6 @@ namespace DevePar.Tests.ParityGFAlgorithms
             int dataBlockCount = 4;
             int parityBlockCount = 4;
             int dataLength = 1;
-            var gfTable = GFTable.GFTable16;
 
 
             var expectedData = GenerateTestDataHelper.ConvertToUint(GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength));
@@ -311,7 +298,6 @@ namespace DevePar.Tests.ParityGFAlgorithms
             //int dataBlockCount = 2;
             //int parityBlockCount = 2;
             //int dataLength = 1;
-            //var gfTable = GFTable.GFTable16;
 
 
             //var expectedData = GenerateTestDataHelper.ConvertToUint(GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength));
@@ -342,7 +328,6 @@ namespace DevePar.Tests.ParityGFAlgorithms
             int dataBlockCount = 3;
             int parityBlockCount = 3;
             int dataLength = 1;
-            var gfTable = GFTable.GFTable16;
 
 
             var expectedData = GenerateTestDataHelper.ConvertToUint(GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength));
@@ -370,7 +355,6 @@ namespace DevePar.Tests.ParityGFAlgorithms
             int dataBlockCount = 64;
             int parityBlockCount = 64;
             int dataLength = 1;
-            var gfTable = GFTable.GFTable16;
 
 
 
