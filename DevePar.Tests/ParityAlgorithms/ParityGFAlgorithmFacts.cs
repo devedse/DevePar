@@ -84,15 +84,15 @@ namespace DevePar.Tests.ParityGFAlgorithms
             }
         }
 
-        //[Fact]
-        //public void RestoresMissingDataForDataFor5BlocksAnd5Parity()
-        //{
-        //    int dataBlockCount = 5;
-        //    int parityBlockCount = 5;
-        //    int dataLength = 5000;
-        //    var gfTable = GFTable.GFTable16;
-        //    RunRepairTest(gfTable, dataBlockCount, parityBlockCount, dataLength);
-        //}
+        [Fact]
+        public void RestoresMissingDataForDataFor5BlocksAnd5Parity_MuchDatas()
+        {
+            int dataBlockCount = 5;
+            int parityBlockCount = 5;
+            int dataLength = 50000;
+            var gfTable = GFTable.GFTable16;
+            RunRepairTest(gfTable, dataBlockCount, parityBlockCount, dataLength);
+        }
 
         [Fact]
         public void TestSpecificScenario()

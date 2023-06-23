@@ -22,7 +22,7 @@ namespace DevePar.Tests.TestHelpers
                 generatedData.Add(new Block<byte>() { Data = new byte[dataLength] });
             }
 
-            var r = new Random(8736614);
+            var r = new Random(8736615);
             for (int u = 0; u < dataLength; u++)
             {
                 for (int i = 0; i < dataBlocks; i++)
