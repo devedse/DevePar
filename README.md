@@ -5,24 +5,30 @@ This project contains a basic implementation of the RAID 5 and RAID 6 algorithms
 
 ## Build status
 
-| Travis (Linux/Osx build) | AppVeyor (Windows build) |
-|:------------------------:|:------------------------:|
-| [![Build Status](https://travis-ci.org/devedse/DevePar.svg?branch=master)](https://travis-ci.org/devedse/DevePar) | [![Build status](https://ci.appveyor.com/api/projects/status/fv737yv5a48q7fdd?svg=true)](https://ci.appveyor.com/project/devedse/devepar) |
+| GitHubActions Builds |
+|:--------------------:|
+| [![GitHubActions Builds](https://github.com/devedse/DeveMazeGeneratorCore/workflows/GitHubActionsBuilds/badge.svg)](https://github.com/devedse/DeveMazeGeneratorCore/actions/workflows/githubactionsbuilds.yml) |
+
+## DockerHub
+
+| Docker Hub |
+|:----------:|
+| [![Docker pulls](https://img.shields.io/docker/v/devedse/devemazegeneratorcoreconsoleapp)](https://hub.docker.com/r/devedse/devemazegeneratorcoreconsoleapp/) |
 
 ## Code Coverage Status
 
 | CodeCov |
 |:-------:|
-| [![codecov](https://codecov.io/gh/devedse/DevePar/branch/master/graph/badge.svg)](https://codecov.io/gh/devedse/DevePar) |
+| [![codecov](https://codecov.io/gh/devedse/DeveMazeGeneratorCore/branch/master/graph/badge.svg)](https://codecov.io/gh/devedse/DeveMazeGeneratorCore) |
 
 ## Code Quality Status
 
 | SonarQube |
 |:---------:|
-| [![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=DevePar&metric=alert_status)](https://sonarcloud.io/dashboard?id=DevePar) |
+| [![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=DeveMazeGeneratorCore&metric=alert_status)](https://sonarcloud.io/dashboard?id=DeveMazeGeneratorCore) |
 
 ## Package
 
 | NuGet |
 |:-----:|
-| [![NuGet](https://img.shields.io/nuget/v/DevePar.svg)](https://www.nuget.org/packages/DevePar/) |
+| [![NuGet](https://img.shields.io/nuget/v/DeveMazeGeneratorCore.svg)](https://www.nuget.org/packages/DeveMazeGeneratorCore/) |
