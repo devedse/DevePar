@@ -44,7 +44,6 @@ namespace DevePar.Tests.TestHelpers
         //        Console.WriteLine($"{i}: Deleting: {string.Join(",", res.Select(t => t.ToString()))}");
         //    }
         //}
-
         private static int IntPow(int x, uint pow)
         {
             int ret = 1;
