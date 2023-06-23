@@ -109,15 +109,15 @@ jobs:
       shell: pwsh
   
 
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       with:
         name: DevePar7z
         path: ./Scripts/Output/DevePar.7z
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       with:
         name: DeveParZip
         path: ./Scripts/Output/DevePar.zip
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       with:
         name: DeveParNuGet
         path: |
