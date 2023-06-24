@@ -703,7 +703,7 @@ namespace DevePar.ParityAlgorithms
                 //Console.WriteLine($"Recovered data:\n\r{res}");
                 for (int y = 0; y < res.Length; y++)
                 {
-                    combinedDataWithMissingData[y].Data[i] = (byte)res[y].Value;
+                    combinedDataWithMissingData[y].Data[i] = res[y].Value;
                 }
             }
 

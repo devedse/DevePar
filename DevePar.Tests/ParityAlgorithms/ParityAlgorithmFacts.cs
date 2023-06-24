@@ -77,9 +77,9 @@ namespace DevePar.Tests.ParityAlgorithms
             int dataLength = 1;
 
 
-            var expectedData = GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength);
+            var expectedData = GenerateTestDataHelper.GenerateTestDataByte(dataBlockCount, dataLength);
 
-            var data = GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength);
+            var data = GenerateTestDataHelper.GenerateTestDataByte(dataBlockCount, dataLength);
             var parityData = ParityAlgorithm.GenerateParityData(data, parityBlockCount);
             var combinedData = data.Concat(parityData).ToList();
 
@@ -170,9 +170,9 @@ namespace DevePar.Tests.ParityAlgorithms
             int dataLength = 1;
 
 
-            var expectedData = GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength);
+            var expectedData = GenerateTestDataHelper.GenerateTestDataByte(dataBlockCount, dataLength);
 
-            var data = GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength);
+            var data = GenerateTestDataHelper.GenerateTestDataByte(dataBlockCount, dataLength);
             var parityData = ParityAlgorithm.GenerateParityData(data, parityBlockCount);
             var combinedData = data.Concat(parityData).ToList();
 
@@ -191,7 +191,7 @@ namespace DevePar.Tests.ParityAlgorithms
 
         private static void RunRepairTest(int dataBlockCount, int parityBlockCount, int dataLength)
         {
-            var expectedData = GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength);
+            var expectedData = GenerateTestDataHelper.GenerateTestDataByte(dataBlockCount, dataLength);
 
 
 
@@ -203,7 +203,7 @@ namespace DevePar.Tests.ParityAlgorithms
                 {
                     var toDelete = rowsToDelete[zzz];
 
-                    var data = GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength);
+                    var data = GenerateTestDataHelper.GenerateTestDataByte(dataBlockCount, dataLength);
                     var parityData = ParityAlgorithm.GenerateParityData(data, parityBlockCount);
                     var combinedData = data.Concat(parityData).ToList();
 

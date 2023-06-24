@@ -104,9 +104,9 @@ namespace DevePar.Tests.ParityGFAlgorithms
             int parityBlockCount = 5;
             int dataLength = 1;
 
-            var expectedData = GenerateTestDataHelper.ConvertToUint(GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength));
+            var expectedData = GenerateTestDataHelper.ConvertToUint(GenerateTestDataHelper.GenerateTestDataByte(dataBlockCount, dataLength));
 
-            var data = GenerateTestDataHelper.ConvertToUint(GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength));
+            var data = GenerateTestDataHelper.ConvertToUint(GenerateTestDataHelper.GenerateTestDataByte(dataBlockCount, dataLength));
             var parityData = ParityGFAlgorithm.GenerateParityData3(gfTable, data, parityBlockCount);
             var combinedData = data.Concat(parityData).ToList();
 
@@ -133,10 +133,10 @@ namespace DevePar.Tests.ParityGFAlgorithms
             int parityBlockCount = 5;
             int dataLength = 1;
 
+            var testData = GenerateTestDataHelper.GenerateTestDataByte(dataBlockCount, dataLength);
 
-            var expectedData = GenerateTestDataHelper.ConvertToUint(GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength));
-
-            var data = GenerateTestDataHelper.ConvertToUint(GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength));
+            var expectedData = GenerateTestDataHelper.ConvertToUint(testData);
+            var data = GenerateTestDataHelper.ConvertToUint(testData);
             var parityData = ParityGFAlgorithm.GenerateParityData3(gfTable, data, parityBlockCount);
             var combinedData = data.Concat(parityData).ToList();
 
@@ -165,9 +165,9 @@ namespace DevePar.Tests.ParityGFAlgorithms
             int dataLength = 1;
 
 
-            var expectedData = GenerateTestDataHelper.ConvertToUint(GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength));
+            var expectedData = GenerateTestDataHelper.ConvertToUint(GenerateTestDataHelper.GenerateTestDataByte(dataBlockCount, dataLength));
 
-            var data = GenerateTestDataHelper.ConvertToUint(GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength));
+            var data = GenerateTestDataHelper.ConvertToUint(GenerateTestDataHelper.GenerateTestDataByte(dataBlockCount, dataLength));
             var parityData = ParityGFAlgorithm.GenerateParityData3(gfTable, data, parityBlockCount);
             var combinedData = data.Concat(parityData).ToList();
 
@@ -192,9 +192,9 @@ namespace DevePar.Tests.ParityGFAlgorithms
             int dataLength = 1;
 
 
-            var expectedData = GenerateTestDataHelper.ConvertToUint(GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength));
+            var expectedData = GenerateTestDataHelper.ConvertToUint(GenerateTestDataHelper.GenerateTestDataByte(dataBlockCount, dataLength));
 
-            var data = GenerateTestDataHelper.ConvertToUint(GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength));
+            var data = GenerateTestDataHelper.ConvertToUint(GenerateTestDataHelper.GenerateTestDataByte(dataBlockCount, dataLength));
             var parityData = ParityGFAlgorithm.GenerateParityData3(gfTable, data, parityBlockCount);
             var combinedData = data.Concat(parityData).ToList();
 
@@ -218,9 +218,9 @@ namespace DevePar.Tests.ParityGFAlgorithms
             int dataLength = 1;
 
 
-            var expectedData = GenerateTestDataHelper.ConvertToUint(GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength));
+            var expectedData = GenerateTestDataHelper.ConvertToUint(GenerateTestDataHelper.GenerateTestDataByte(dataBlockCount, dataLength));
 
-            var data = GenerateTestDataHelper.ConvertToUint(GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength));
+            var data = GenerateTestDataHelper.ConvertToUint(GenerateTestDataHelper.GenerateTestDataByte(dataBlockCount, dataLength));
             var parityData = ParityGFAlgorithm.GenerateParityData3(gfTable, data, parityBlockCount);
             var combinedData = data.Concat(parityData).ToList();
 
@@ -245,9 +245,9 @@ namespace DevePar.Tests.ParityGFAlgorithms
             int dataLength = 1;
 
 
-            var expectedData = GenerateTestDataHelper.ConvertToUint(GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength));
+            var expectedData = GenerateTestDataHelper.ConvertToUint(GenerateTestDataHelper.GenerateTestDataByte(dataBlockCount, dataLength));
 
-            var data = GenerateTestDataHelper.ConvertToUint(GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength));
+            var data = GenerateTestDataHelper.ConvertToUint(GenerateTestDataHelper.GenerateTestDataByte(dataBlockCount, dataLength));
             var parityData = ParityGFAlgorithm.GenerateParityData3(gfTable, data, parityBlockCount);
             var combinedData = data.Concat(parityData).ToList();
 
@@ -271,9 +271,9 @@ namespace DevePar.Tests.ParityGFAlgorithms
             int dataLength = 1;
 
 
-            var expectedData = GenerateTestDataHelper.ConvertToUint(GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength));
+            var expectedData = GenerateTestDataHelper.ConvertToUint(GenerateTestDataHelper.GenerateTestDataByte(dataBlockCount, dataLength));
 
-            var data = GenerateTestDataHelper.ConvertToUint(GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength));
+            var data = GenerateTestDataHelper.ConvertToUint(GenerateTestDataHelper.GenerateTestDataByte(dataBlockCount, dataLength));
             var parityData = ParityGFAlgorithm.GenerateParityData3(gfTable, data, parityBlockCount);
             var combinedData = data.Concat(parityData).ToList();
 
@@ -330,9 +330,9 @@ namespace DevePar.Tests.ParityGFAlgorithms
             int dataLength = 1;
 
 
-            var expectedData = GenerateTestDataHelper.ConvertToUint(GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength));
+            var expectedData = GenerateTestDataHelper.ConvertToUint(GenerateTestDataHelper.GenerateTestDataByte(dataBlockCount, dataLength));
 
-            var data = GenerateTestDataHelper.ConvertToUint(GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength));
+            var data = GenerateTestDataHelper.ConvertToUint(GenerateTestDataHelper.GenerateTestDataByte(dataBlockCount, dataLength));
             var parityData = ParityGFAlgorithm.GenerateParityData3(gfTable, data, parityBlockCount);
             var combinedData = data.Concat(parityData).ToList();
 
@@ -362,9 +362,9 @@ namespace DevePar.Tests.ParityGFAlgorithms
             //Parallel.For(0, 1000, new ParallelOptions() { MaxDegreeOfParallelism = 32 }, (i) =>
             for (int i = 0; i < 100; i++)
             {
-                var expectedData = GenerateTestDataHelper.ConvertToUint(GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength));
+                var expectedData = GenerateTestDataHelper.ConvertToUint(GenerateTestDataHelper.GenerateTestDataByte(dataBlockCount, dataLength));
 
-                var data = GenerateTestDataHelper.ConvertToUint(GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength));
+                var data = GenerateTestDataHelper.ConvertToUint(GenerateTestDataHelper.GenerateTestDataByte(dataBlockCount, dataLength));
                 var parityData = ParityGFAlgorithm.GenerateParityData3(gfTable, data, parityBlockCount);
                 var combinedData = data.Concat(parityData).ToList();
 
@@ -386,7 +386,8 @@ namespace DevePar.Tests.ParityGFAlgorithms
 
         private static void RunRepairTest(GFTable gfTable, int dataBlockCount, int parityBlockCount, int dataLength)
         {
-            var expectedData = GenerateTestDataHelper.ConvertToUint(GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength));
+            var testData = GenerateTestDataHelper.GenerateTestDataShort(dataBlockCount, dataLength);
+            var expectedData = GenerateTestDataHelper.ConvertToUint(testData);
 
 
 
@@ -395,12 +396,12 @@ namespace DevePar.Tests.ParityGFAlgorithms
                 var rowsToDelete = DeleteDataHelper.DetermineAllPermutations(dataBlockCount + parityBlockCount, dataBlocksToDeleteCount);
 
                 //for (int zzz = 0; zzz < rowsToDelete.Count; zzz++)
-                Parallel.For(0, rowsToDelete.Count, new ParallelOptions() { MaxDegreeOfParallelism = 32 }, (zzz) =>
+                Parallel.For(0, rowsToDelete.Count, new ParallelOptions() { MaxDegreeOfParallelism = 1 }, (zzz) =>
                 {
                     {
                         var toDelete = rowsToDelete[zzz];
 
-                        var data = GenerateTestDataHelper.ConvertToUint(GenerateTestDataHelper.GenerateTestData(dataBlockCount, dataLength));
+                        var data = GenerateTestDataHelper.ConvertToUint(testData);
                         var parityData = ParityGFAlgorithm.GenerateParityData3(gfTable, data, parityBlockCount);
                         var combinedData = data.Concat(parityData).ToList();
 
@@ -542,7 +543,7 @@ namespace DevePar.Tests.ParityGFAlgorithms
         [Fact]
         public void WriteTestFiles()
         {
-            var data = GenerateTestDataHelper.GenerateTestData(4, 1);
+            var data = GenerateTestDataHelper.GenerateTestDataByte(4, 1);
             for (int i = 0; i < data.Count; i++)
             {
                 File.WriteAllBytes($"{i}.txt", new byte[] { data[i].Data[0] });

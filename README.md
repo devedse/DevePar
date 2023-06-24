@@ -7,28 +7,28 @@ This project contains a basic implementation of the RAID 5 and RAID 6 algorithms
 
 | GitHubActions Builds |
 |:--------------------:|
-| [![GitHubActions Builds](https://github.com/devedse/DeveMazeGeneratorCore/workflows/GitHubActionsBuilds/badge.svg)](https://github.com/devedse/DeveMazeGeneratorCore/actions/workflows/githubactionsbuilds.yml) |
+| [![GitHubActions Builds](https://github.com/devedse/DevePar/workflows/GitHubActionsBuilds/badge.svg)](https://github.com/devedse/DevePar/actions/workflows/githubactionsbuilds.yml) |
 
 ## DockerHub
 
 | Docker Hub |
 |:----------:|
-| [![Docker pulls](https://img.shields.io/docker/v/devedse/devemazegeneratorcoreconsoleapp)](https://hub.docker.com/r/devedse/devemazegeneratorcoreconsoleapp/) |
+| [![Docker pulls](https://img.shields.io/docker/v/devedse/deveparconsoleapp)](https://hub.docker.com/r/devedse/deveparconsoleapp/) |
 
 ## Code Coverage Status
 
 | CodeCov |
 |:-------:|
-| [![codecov](https://codecov.io/gh/devedse/DeveMazeGeneratorCore/branch/master/graph/badge.svg)](https://codecov.io/gh/devedse/DeveMazeGeneratorCore) |
+| [![codecov](https://codecov.io/gh/devedse/DevePar/branch/master/graph/badge.svg)](https://codecov.io/gh/devedse/DevePar) |
 
 ## Code Quality Status
 
 | SonarQube |
 |:---------:|
-| [![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=DeveMazeGeneratorCore&metric=alert_status)](https://sonarcloud.io/dashboard?id=DeveMazeGeneratorCore) |
+| [![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=DevePar&metric=alert_status)](https://sonarcloud.io/dashboard?id=DevePar) |
 
 ## Package
 
 | NuGet |
 |:-----:|
-| [![NuGet](https://img.shields.io/nuget/v/DeveMazeGeneratorCore.svg)](https://www.nuget.org/packages/DeveMazeGeneratorCore/) |
+| [![NuGet](https://img.shields.io/nuget/v/DevePar.svg)](https://www.nuget.org/packages/DevePar/) |
