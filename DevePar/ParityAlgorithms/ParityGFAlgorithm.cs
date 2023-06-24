@@ -699,7 +699,6 @@ namespace DevePar.ParityAlgorithms
 
                 var res = recoveryMatrixDing.Multiply(toArray);
 
-
                 //Console.WriteLine($"Recovered data:\n\r{res}");
                 for (int y = 0; y < res.Length; y++)
                 {
