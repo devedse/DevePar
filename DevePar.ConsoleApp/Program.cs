@@ -25,13 +25,15 @@ namespace DevePar.ConsoleApp
             Console.WriteLine("Creating par files...");
 
             var theFileDir = Path.Combine("TestFiles", "Set1");
-            var testFiles = Directory.GetFiles(theFileDir).Where(t => Path.GetExtension(t).Equals(".png", StringComparison.OrdinalIgnoreCase)).ToList();
+            var testFiles = Directory.GetFiles(theFileDir).Where(t => !Path.GetExtension(t).Equals(".devepar", StringComparison.OrdinalIgnoreCase) && !Path.GetFileName(t).Equals("devepar.json")).ToList();
 
             DeveParFileRepairer.CreateParFiles(testFiles, theFileDir, 3);
 
 
-            Console.WriteLine("Deleting file 2");
-            File.Delete(testFiles[1]);
+            Console.WriteLine("Delete some files now and press enter to continue repairing :)");
+            Console.ReadLine();
+            //Console.WriteLine("Deleting file 2");
+            //File.Delete(testFiles[1]);
 
 
 

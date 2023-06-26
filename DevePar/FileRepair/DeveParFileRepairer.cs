@@ -3,6 +3,7 @@ using DevePar.ParityAlgorithms;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime;
@@ -59,7 +60,10 @@ namespace DevePar.FileRepair
             var filesAsBlocks = filesAsShortAsUint.Select(array => new Block<uint> { Data = array }).ToList();
 
             // Generate parity data
+            Console.WriteLine("Generating PAR files in memory...");
+            var w = Stopwatch.StartNew();
             var parityData = ParityGFAlgorithm.GenerateParityData3(GFTable, filesAsBlocks, parityBlockCount);
+            Console.WriteLine($"Generating PAR files took: {w.Elapsed}");
 
             //Store the output as files (0.devepar, 1.devepar, etc)
             for (int i = 0; i < parityData.Count; i++)
@@ -67,6 +71,8 @@ namespace DevePar.FileRepair
                 var parityDataAsShorts = parityData[i].Data.Select(t => (ushort)t).ToArray();
                 var parityDataAsBytes = FileRepairHelper.ToByteArray(parityDataAsShorts);
                 var parFileName = $"{i}.devepar";
+
+                Console.WriteLine($"Writing par file: {parFileName}");
                 File.WriteAllBytes(Path.Combine(workingDir, parFileName), parityDataAsBytes);
 
                 var parFileMetadata = new DeveParFileMetadata()
@@ -102,6 +108,7 @@ namespace DevePar.FileRepair
                 var filePath = Path.Combine(workingDir, metadata.FileName);
                 if (!File.Exists(filePath) || FileRepairHelper.CalculateHash(File.ReadAllBytes(filePath)) != metadata.FileHash)
                 {
+                    Console.WriteLine($"Found that {filePath} is missing or corrupted");
                     data[i] = new Block<uint>() { Data = null! };
                     missingFilesCount++;
                     continue;
@@ -144,7 +151,10 @@ namespace DevePar.FileRepair
                 throw new InvalidOperationException("Not enough valid files to repair all missing/corrupt files");
             }
 
+            Console.WriteLine("Starting repair...");
+            var w = Stopwatch.StartNew();
             var repairedData = ParityGFAlgorithm.RecoverData3(GFTable, data.ToList(), parityData.ToList(), totalParFilesCount);
+            Console.WriteLine($"Repair completed in: {w.Elapsed}");
 
             for (int i = 0; i < totalFilesCount; i++)
             {
@@ -164,6 +174,7 @@ namespace DevePar.FileRepair
                 Array.Copy(dataAsBytes, truncatedDataAsBytes, originalFileLength);
 
                 var fileName = metadatas.DeveInputFileMetadatas[i].FileName;
+                Console.WriteLine($"Writing file: {fileName}");
                 File.WriteAllBytes(Path.Combine(workingDir, fileName), truncatedDataAsBytes);
             }
 
