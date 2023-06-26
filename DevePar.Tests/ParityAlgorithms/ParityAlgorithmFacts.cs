@@ -1,6 +1,6 @@
 ﻿using DevePar.Galois;
 using DevePar.ParityAlgorithms;
-using DevePar.Tests.TestHelpers;
+using DevePar.TestHelpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -110,7 +110,7 @@ namespace DevePar.Tests.ParityAlgorithms
             //1 16 29 205 76
             //1 128 19 117 24
 
-            VerifyData(expectedData, repairedData);
+            Assert.True(VerificationHelper.VerifyData(expectedData, repairedData));
         }
 
         //[Fact]
@@ -159,7 +159,7 @@ namespace DevePar.Tests.ParityAlgorithms
         //    //8 64 205 117 143
         //    //16 29 76 24 157
 
-        //    VerifyData(expectedData, repairedData);
+        //    Assert.True(VerificationHelper.VerifyData(expectedData, repairedData));
         //}
 
         [Fact]
@@ -186,7 +186,7 @@ namespace DevePar.Tests.ParityAlgorithms
 
             var repairedData = ParityAlgorithm.RecoverData(data, parityData, parityBlockCount);
 
-            VerifyData(expectedData, repairedData);
+            Assert.True(VerificationHelper.VerifyData(expectedData, repairedData));
         }
 
         private static void RunRepairTest(int dataBlockCount, int parityBlockCount, int dataLength)
@@ -219,23 +219,7 @@ namespace DevePar.Tests.ParityAlgorithms
 
                     var repairedData = ParityAlgorithm.RecoverData(data, parityData, parityBlockCount);
 
-                    VerifyData(expectedData, repairedData);
-                }
-            }
-        }
-
-        private static void VerifyData(List<Block<byte>> expectedData, List<Block<byte>> repairedData)
-        {
-            for (int y = 0; y < expectedData.Count; y++)
-            {
-                var curExpectedData = expectedData[y];
-                var curRepairData = repairedData[y];
-                for (int z = 0; z < curExpectedData.Data.Length; z++)
-                {
-                    var curExpectedValue = curExpectedData.Data[z];
-                    var curRepairedValue = curRepairData.Data[z];
-
-                    Assert.Equal(curExpectedValue, curRepairedValue);
+                    Assert.True(VerificationHelper.VerifyData(expectedData, repairedData));
                 }
             }
         }

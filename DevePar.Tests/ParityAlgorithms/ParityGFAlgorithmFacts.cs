@@ -1,6 +1,6 @@
 ﻿using DevePar.Galois;
 using DevePar.ParityAlgorithms;
-using DevePar.Tests.TestHelpers;
+using DevePar.TestHelpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -120,7 +120,7 @@ namespace DevePar.Tests.ParityGFAlgorithms
 
             var repairedData = ParityGFAlgorithm.RecoverData3(gfTable, data, parityData, parityBlockCount);
 
-            VerifyData(expectedData, repairedData);
+            Assert.True(VerificationHelper.VerifyData(expectedData, repairedData));
         }
 
         [Fact]
@@ -154,7 +154,7 @@ namespace DevePar.Tests.ParityGFAlgorithms
             var repairedData = ParityGFAlgorithm.RecoverData3(gfTable, data, parityData, parityBlockCount);
 
 
-            VerifyData(expectedData, repairedData);
+            Assert.True(VerificationHelper.VerifyData(expectedData, repairedData));
         }
 
         [Fact]
@@ -181,7 +181,7 @@ namespace DevePar.Tests.ParityGFAlgorithms
 
             var repairedData = ParityGFAlgorithm.RecoverData3(gfTable, data, parityData, parityBlockCount);
 
-            VerifyData(expectedData, repairedData);
+            Assert.True(VerificationHelper.VerifyData(expectedData, repairedData));
         }
 
         [Fact]
@@ -207,7 +207,7 @@ namespace DevePar.Tests.ParityGFAlgorithms
 
             var repairedData = ParityGFAlgorithm.RecoverData3(gfTable, data, parityData, parityBlockCount);
 
-            VerifyData(expectedData, repairedData);
+            Assert.True(VerificationHelper.VerifyData(expectedData, repairedData));
         }
 
         [Fact]
@@ -234,7 +234,7 @@ namespace DevePar.Tests.ParityGFAlgorithms
 
             var repairedData = ParityGFAlgorithm.RecoverData3(gfTable, data, parityData, parityBlockCount);
 
-            VerifyData(expectedData, repairedData);
+            Assert.True(VerificationHelper.VerifyData(expectedData, repairedData));
         }
 
         [Fact]
@@ -260,7 +260,7 @@ namespace DevePar.Tests.ParityGFAlgorithms
 
             var repairedData = ParityGFAlgorithm.RecoverData3(gfTable, data, parityData, parityBlockCount);
 
-            VerifyData(expectedData, repairedData);
+            Assert.True(VerificationHelper.VerifyData(expectedData, repairedData));
         }
 
         [Fact]
@@ -288,7 +288,7 @@ namespace DevePar.Tests.ParityGFAlgorithms
 
             var repairedData = ParityGFAlgorithm.RecoverData3(gfTable, data, parityData, parityBlockCount);
 
-            VerifyData(expectedData, repairedData);
+            Assert.True(VerificationHelper.VerifyData(expectedData, repairedData));
         }
 
 
@@ -318,8 +318,8 @@ namespace DevePar.Tests.ParityGFAlgorithms
             //var repairedData = ParityGFAlgorithm.RecoverData3(gfTable, data, parityData, parityBlockCount);
             //var repairedData2 = ParityGFAlgorithm.RecoverData2(gfTable, data, parityData, parityBlockCount);
 
-            //VerifyData(expectedData, repairedData);
-            //VerifyData(expectedData, repairedData2);
+            //Assert.True(VerificationHelper.VerifyData(expectedData, repairedData));
+            //Assert.True(VerificationHelper.VerifyData(expectedData, repairedData2));
         }
 
         [Fact]
@@ -346,7 +346,7 @@ namespace DevePar.Tests.ParityGFAlgorithms
 
             var repairedData = ParityGFAlgorithm.RecoverData3(gfTable, data, parityData, parityBlockCount);
 
-            VerifyData(expectedData, repairedData);
+            Assert.True(VerificationHelper.VerifyData(expectedData, repairedData));
         }
 
         [Fact]
@@ -379,7 +379,7 @@ namespace DevePar.Tests.ParityGFAlgorithms
 
                 var repairedData = ParityGFAlgorithm.RecoverData3(gfTable, data, parityData, parityBlockCount);
 
-                VerifyData(expectedData, repairedData);
+                Assert.True(VerificationHelper.VerifyData(expectedData, repairedData));
             }
             //);
         }
@@ -413,7 +413,7 @@ namespace DevePar.Tests.ParityGFAlgorithms
 
                 var repairedData = ParityGFAlgorithm.RecoverData3(gfTable, data, parityData, parityBlockCount);
 
-                VerifyData(expectedData, repairedData);
+                Assert.True(VerificationHelper.VerifyData(expectedData, repairedData));
             }
             //);
         }
@@ -446,7 +446,7 @@ namespace DevePar.Tests.ParityGFAlgorithms
 
                         var repairedData = ParityGFAlgorithm.RecoverData3(gfTable, data, parityData, parityBlockCount);
 
-                        VerifyData(expectedData, repairedData);
+                        Assert.True(VerificationHelper.VerifyData(expectedData, repairedData));
                     }
                 }
                 );
@@ -469,21 +469,7 @@ namespace DevePar.Tests.ParityGFAlgorithms
             }
         }
 
-        private static void VerifyData(List<Block<uint>> expectedData, List<Block<uint>> repairedData)
-        {
-            for (int y = 0; y < expectedData.Count; y++)
-            {
-                var curExpectedData = expectedData[y];
-                var curRepairData = repairedData[y];
-                for (int z = 0; z < curExpectedData.Data.Length; z++)
-                {
-                    var curExpectedValue = curExpectedData.Data[z];
-                    var curRepairedValue = curRepairData.Data[z];
-
-                    Assert.Equal(curExpectedValue, curRepairedValue);
-                }
-            }
-        }
+       
 
 
         [Fact]

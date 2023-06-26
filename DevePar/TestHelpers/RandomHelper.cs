@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DevePar.Tests.TestHelpers
+namespace DevePar.TestHelpers
 {
     public static class RandomHelper
     {

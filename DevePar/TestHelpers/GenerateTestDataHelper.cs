@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace DevePar.Tests.TestHelpers
+namespace DevePar.TestHelpers
 {
     public static class GenerateTestDataHelper
     {
