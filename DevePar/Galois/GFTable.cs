@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace DevePar.Galois
@@ -70,9 +71,12 @@ namespace DevePar.Galois
             return new GField(this, value);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void ThrowIfOutsideOfField(uint a, uint b)
         {
+#if DEBUG
             if (a < 0 || a > Limit || b < 0 || b > Limit) throw new ArgumentException("The arguments need to exist in the field.");
+#endif
         }
 
         public uint Add(uint a, uint b)

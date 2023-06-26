@@ -3,8 +3,10 @@ using DevePar.LinearAlgebra;
 using DevePar.ParityAlgorithms;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace DevePar.ConsoleApp
 {
@@ -12,6 +14,56 @@ namespace DevePar.ConsoleApp
     {
         public static void Main(string[] args)
         {
+
+            //var dataList = new GField[100_000_000];
+
+            //var blah = GFTable.GFTable16;
+            //for (uint i = 0; i < dataList.Length; i++)
+            //{
+            //    var a = new GField(blah, i % 32767);
+            //    dataList[i] = a;
+            //}
+
+
+            var randomShortData = new ushort[100_000_000];
+
+            for (int yyy = 0; yyy < randomShortData.Length; yyy++)
+            {
+                randomShortData[yyy] = (ushort)(yyy % 32767);
+            }
+
+
+            var w = Stopwatch.StartNew();
+            for (int yy = 0; yy < 10; yy++)
+            {
+                int superCount = 0;
+                for (uint i = 0; i < randomShortData.Length; i++)
+                {
+                    var inp = randomShortData[i];
+                    var res = inp ^ 12345;
+                    if (res == 1234)
+                    {
+                        superCount++;
+                    }
+
+                }
+                Console.WriteLine($"{w.Elapsed} => {superCount}");
+
+                w.Restart();
+            }
+
+
+
+
+            //Console.WriteLine(dataList[13000].Value);
+
+
+            for (int i = 0; i < 10; i++)
+            {
+                Console.WriteLine("Waiting..");
+                Thread.Sleep(1000);
+            }
+
             Console.WriteLine("Hello World!");
 
             var baseListTest = BaseCalculator.CalcBase(8).ToList();
