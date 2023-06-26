@@ -198,9 +198,20 @@ namespace DevePar.ParityAlgorithms
             }
 
 
-            var leftmatrix = new GField[outcount, incount];
-            var rightmatrix = new GField[outcount, outcount];
+            var leftmatrix = new GField[outcount][];
+            for (int i = 0; i < outcount; i++)
+            {
+                leftmatrix[i] = new GField[incount];
+            }
 
+            var rightmatrix = new GField[outcount][];
+            if (datamissing > 0)
+            {
+                for (int i = 0; i < outcount; i++)
+                {
+                    rightmatrix[i] = new GField[outcount];
+                }
+            }
 
             var combinedData = dataBlocks.Concat(parityBlocks).ToList();
             int outputrow = 0;
@@ -219,12 +230,12 @@ namespace DevePar.ParityAlgorithms
                 // One column for each present data block
                 for (uint col = 0; col < datapresent; col++)
                 {
-                    leftmatrix[row, col] = database[datapresentindex[col]].Pow((uint)parpresentindex[row]);
+                    leftmatrix[row][col] = database[datapresentindex[col]].Pow((uint)parpresentindex[row]);
                 }
                 // One column for each each present recovery block that will be used for a missing data block
                 for (uint col = 0; col < datamissing; col++)
                 {
-                    leftmatrix[row, col + datapresent] = gfTable.CreateField((uint)((row == col) ? 1 : 0));
+                    leftmatrix[row][col + datapresent] = gfTable.CreateField((uint)((row == col) ? 1 : 0));
                 }
 
                 if (datamissing > 0)
@@ -232,12 +243,12 @@ namespace DevePar.ParityAlgorithms
                     // One column for each missing data block
                     for (uint col = 0; col < datamissing; col++)
                     {
-                        rightmatrix[row, col] = database[datamissingindex[col]].Pow((uint)parpresentindex[row]);
+                        rightmatrix[row][col] = database[datamissingindex[col]].Pow((uint)parpresentindex[row]);
                     }
                     // One column for each missing recovery block
                     for (uint col = 0; col < parmissing; col++)
                     {
-                        rightmatrix[row, col + datamissing] = gfTable.CreateField(0);
+                        rightmatrix[row][col + datamissing] = gfTable.CreateField(0);
                     }
                 }
 
@@ -258,12 +269,12 @@ namespace DevePar.ParityAlgorithms
                 // One column for each present data block
                 for (uint col = 0; col < datapresent; col++)
                 {
-                    leftmatrix[(row + datamissing), col] = database[datapresentindex[col]].Pow((uint)parmissingindex[row]);
+                    leftmatrix[(row + datamissing)][col] = database[datapresentindex[col]].Pow((uint)parmissingindex[row]);
                 }
                 // One column for each each present recovery block that will be used for a missing data block
                 for (uint col = 0; col < datamissing; col++)
                 {
-                    leftmatrix[(row + datamissing), col + datapresent] = gfTable.CreateField(0);
+                    leftmatrix[(row + datamissing)][col + datapresent] = gfTable.CreateField(0);
                 }
 
                 if (datamissing > 0)
@@ -271,12 +282,12 @@ namespace DevePar.ParityAlgorithms
                     // One column for each missing data block
                     for (uint col = 0; col < datamissing; col++)
                     {
-                        rightmatrix[(row + datamissing), col] = database[datamissingindex[col]].Pow((uint)parmissingindex[row]);
+                        rightmatrix[(row + datamissing)][col] = database[datamissingindex[col]].Pow((uint)parmissingindex[row]);
                     }
                     // One column for each missing recovery block
                     for (uint col = 0; col < parmissing; col++)
                     {
-                        rightmatrix[(row + datamissing), col + datamissing] = gfTable.CreateField((uint)((row == col) ? 1 : 0));
+                        rightmatrix[(row + datamissing)][col + datamissing] = gfTable.CreateField((uint)((row == col) ? 1 : 0));
                     }
                 }
 
@@ -284,12 +295,12 @@ namespace DevePar.ParityAlgorithms
             }
 
             var leftmatrixM = new MatrixGField(leftmatrix);
-            var rightmatrixM = new MatrixGField(rightmatrix);
 
             if (datamissing > 0)
             {
                 // Perform Gaussian Elimination and then delete the right matrix (which 
                 // will no longer be required).
+                var rightmatrixM = new MatrixGField(rightmatrix);
                 GaussElim(gfTable, outcount, incount, leftmatrixM, rightmatrixM, datamissing);
 
             }
@@ -418,7 +429,7 @@ namespace DevePar.ParityAlgorithms
             return parityDataList;
         }
 
-      
+
 
         public static List<Block<uint>> GenerateParityData3(GFTable gfTable, List<Block<uint>> dataBlocks, int parityBlockCount)
         {
