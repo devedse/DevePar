@@ -1,8 +1,10 @@
-﻿using DevePar.Galois;
+﻿using DevePar.FileRepair;
+using DevePar.Galois;
 using DevePar.LinearAlgebra;
 using DevePar.ParityAlgorithms;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
@@ -12,8 +14,37 @@ namespace DevePar.ConsoleApp
     {
         public static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            FileRepairTest();
 
+
+        }
+
+
+        public static void FileRepairTest()
+        {
+            Console.WriteLine("Creating par files...");
+
+            var theFileDir = Path.Combine("TestFiles", "Set1");
+            var testFiles = Directory.GetFiles(theFileDir).Where(t => Path.GetExtension(t).Equals(".png", StringComparison.OrdinalIgnoreCase)).ToList();
+
+            DeveParFileRepairer.CreateParFiles(testFiles, theFileDir, 3);
+
+
+            Console.WriteLine("Deleting file 2");
+            File.Delete(testFiles[1]);
+
+
+
+            Console.WriteLine("Repairing files...");
+
+            DeveParFileRepairer.RepairFiles(theFileDir, Path.Combine(theFileDir, "devepar.json"));
+        }
+
+
+
+
+        public static void OldStuff()
+        {
             var baseListTest = BaseCalculator.CalcBase(8).ToList();
 
             var rrrrrr = string.Join($"{Environment.NewLine}", baseListTest);
@@ -32,7 +63,6 @@ namespace DevePar.ConsoleApp
 
             var res2 = test1.Add(250, 50);
         }
-
 
         public static void GoParStuff()
         {
