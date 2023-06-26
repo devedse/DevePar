@@ -21,8 +21,8 @@ namespace DevePar.ConsoleApp
 
         public static void GenerateUberMatrix()
         {
-            int dataBlockCount = 5000;
-            int parityBlockCount = 5000;
+            int dataBlockCount = short.MaxValue;
+            int parityBlockCount = short.MaxValue;
             int dataLength = 2;
             var gfTable = GFTable.GFTable16;
 
@@ -47,9 +47,14 @@ namespace DevePar.ConsoleApp
 
                 var repairedData = ParityGFAlgorithm.RecoverData3(gfTable, data, parityData, parityBlockCount);
 
-                if (VerificationHelper.VerifyData(expectedData, repairedData))
+                if (!VerificationHelper.VerifyData(expectedData, repairedData))
                 {
                     Console.WriteLine("Error while veryfing the data :(, press enter to continue");
+                    Console.ReadLine();
+                }
+                else
+                {
+                    Console.WriteLine("Wohoooo it all worked!! :D");
                     Console.ReadLine();
                 }
 

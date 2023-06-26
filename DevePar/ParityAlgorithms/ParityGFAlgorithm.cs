@@ -2,6 +2,7 @@
 using DevePar.LinearAlgebra;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -10,6 +11,7 @@ namespace DevePar.ParityAlgorithms
     public static class ParityGFAlgorithm
     {
         //private const int Base = 2;
+        public const bool DebugLogging = false;
 
         public static MatrixGField CreateParityMatrix(GFTable gfTable, int dataBlocksCount, int parityBlockCount)
         {
@@ -201,6 +203,10 @@ namespace DevePar.ParityAlgorithms
             var leftmatrix = new GField[outcount][];
             for (int i = 0; i < outcount; i++)
             {
+                if (DebugLogging)
+                {
+                    Console.WriteLine($"Seeding GField array leftMatrix {i}...");
+                }
                 leftmatrix[i] = new GField[incount];
             }
 
@@ -209,6 +215,10 @@ namespace DevePar.ParityAlgorithms
             {
                 for (int i = 0; i < outcount; i++)
                 {
+                    if (DebugLogging)
+                    {
+                        Console.WriteLine($"Seeding GField array rightMatrix {i}...");
+                    }
                     rightmatrix[i] = new GField[outcount];
                 }
             }
@@ -220,6 +230,11 @@ namespace DevePar.ParityAlgorithms
 
             for (uint row = 0; row < datamissing; row++)
             {
+                if (DebugLogging)
+                {
+                    Console.WriteLine($"Calculating matrix rows for datamissing: {row}");
+                }
+
                 // Get the exponent of the next present recovery block
                 while (combinedData[outputrow].Data != null)
                 {
@@ -259,6 +274,11 @@ namespace DevePar.ParityAlgorithms
 
             for (uint row = 0; row < parmissing; row++)
             {
+                if (DebugLogging)
+                {
+                    Console.WriteLine($"Calculating matrix rows for parmissing: {row}");
+                }
+
                 // Get the exponent of the next missing recovery block
                 while (combinedData[outputrow].Data == null)
                 {
@@ -310,8 +330,15 @@ namespace DevePar.ParityAlgorithms
 
         public static void GaussElim(GFTable gfTable, uint rows, uint leftcols, MatrixGField leftmatrix, MatrixGField rightmatrix, uint datamissing)
         {
+            var w = Stopwatch.StartNew();
             for (int row = 0; row < datamissing; row++)
             {
+                if (DebugLogging)
+                {
+                    Console.WriteLine($"{w.Elapsed} GaussElim Outer loop > Gaus row: {row}");
+                    w.Restart();
+                }
+
                 // NB Row and column swapping to find a non zero pivot value or to find the largest value
                 // is not necessary due to the nature of the arithmetic and construction of the RS matrix.
 

@@ -385,10 +385,44 @@ namespace DevePar.Tests.ParityGFAlgorithms
         }
 
         [Fact]
-        public void TestSpecificScenarioHugeMaxShort()
+        public void TestSpecificScenarioHugeMaxShortButLowParity()
         {
-            int dataBlockCount = 5000;
-            int parityBlockCount = 5000;
+            int dataBlockCount = short.MaxValue;
+            int parityBlockCount = 40;
+            int dataLength = 2;
+
+
+            //Parallel.For(0, 1000, new ParallelOptions() { MaxDegreeOfParallelism = 32 }, (i) =>
+            for (int i = 0; i < 1; i++)
+            {
+                var testData = GenerateTestDataHelper.GenerateTestDataShort(dataBlockCount, dataLength);
+                var expectedData = GenerateTestDataHelper.ConvertToUint(testData);
+
+                var data = GenerateTestDataHelper.ConvertToUint(testData);
+                var parityData = ParityGFAlgorithm.GenerateParityData3(gfTable, data, parityBlockCount);
+                var combinedData = data.Concat(parityData).ToList();
+
+                var r = new Random(i);
+
+                combinedData.Shuffle(r);
+                for (int y = 0; y < parityBlockCount; y++)
+                {
+                    combinedData[y].Data = null;
+                }
+
+
+                var repairedData = ParityGFAlgorithm.RecoverData3(gfTable, data, parityData, parityBlockCount);
+
+                Assert.True(VerificationHelper.VerifyData(expectedData, repairedData));
+            }
+            //);
+        }
+
+        [Fact]
+        public void TestSpecificScenarioHuge500()
+        {
+            int dataBlockCount = 500;
+            int parityBlockCount = 500;
             int dataLength = 2;
 
 
