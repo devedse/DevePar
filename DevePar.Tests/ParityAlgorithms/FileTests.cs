@@ -1,55 +1,43 @@
-﻿//using System;
-//using System.Collections;
-//using System.Collections.Generic;
-//using System.IO;
-//using System.Linq;
-//using System.Text;
-//using System.Threading.Tasks;
-//using Xunit;
+﻿using DevePar.FileRepair;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Xunit;
 
-//namespace DevePar.Tests.ParityAlgorithms
-//{
-//    public class FileTests
-//    {
-//        public class MetaData
-//        {
-//            public List<int> FileLengths { get; } = new List<int>();
-//            public List<string> Hashes { get; } = new List<string>();
-//        }
+namespace DevePar.Tests.ParityAlgorithms
+{
+    public class FileTests
+    {
+        [Fact]
+        public void FileRepairWorks()
+        {
+            Console.WriteLine("Creating par files...");
 
-//        [Fact]        
-//        public void GenerateParFilesForTestSet1()
-//        {
-//            var metaData = new MetaData();
-//            var inputDir = Path.Combine("TestFiles1", "Set1");
+            var theFileDir = Path.Combine("TestFiles", "Set1");
+            var testFiles = Directory.GetFiles(theFileDir).Where(t => !Path.GetExtension(t).Equals(".devepar", StringComparison.OrdinalIgnoreCase) && !Path.GetFileName(t).Equals("devepar.json")).ToList();
 
-//            var data = new List<byte[]>();
+            DeveParFileRepairer.CreateParFiles(testFiles, theFileDir, 3);
 
-//            foreach (var file in Directory.GetFiles(inputDir))
-//            {
-//                var d = File.ReadAllBytes(file);
-//                data.Add(d);
-//            }
+
+            Console.WriteLine("Deleting file 2");
+            var hashBefore = FileRepairHelper.CalculateHash(File.ReadAllBytes(testFiles[1]));
+            File.Delete(testFiles[1]);
 
 
 
-//            var dataConverted = data.Select(t => ToShorter(t).Select(z => (uint)z).ToArray()).ToArray();
-//            var longest = dataConverted.Max(t => t.Length);
+            Console.WriteLine("Repairing files...");
 
+            DeveParFileRepairer.RepairFiles(theFileDir, Path.Combine(theFileDir, "devepar.json"));
 
-//            /
-//        }
+            Console.WriteLine("Repair completed");
 
-
-
-//        public short[] ToShorter(byte[] byteArray)
-//        {
-//            var shortArray = new short[byteArray.Length / 2 + 1];
-//            for (int i = 0; i < byteArray.Length; i += 2)
-//            {
-//                shortArray[i / 2] = BitConverter.ToInt16(byteArray, i);
-//            }
-//            return shortArray;
-//        }
-//    }
-//}
+            Assert.True(File.Exists(testFiles[1]));
+            var hashAfter = FileRepairHelper.CalculateHash(File.ReadAllBytes(testFiles[1]));
+            Assert.Equal(hashBefore, hashAfter);
+        }
+    }
+}

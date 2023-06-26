@@ -35,6 +35,8 @@ namespace DevePar.FileRepair
                 var d = File.ReadAllBytes(filePath);
                 filesAsByte.Add(d);
 
+                Console.WriteLine($"Found {filePath} with length: {d.Length}");
+
                 var fileMetadata = new DeveParFileMetadata()
                 {
                     FileName = Path.GetFileName(filePath),
@@ -98,6 +100,7 @@ namespace DevePar.FileRepair
             int totalParFilesCount = metadatas.DeveParFileMetadatas.Count;
             Block<uint>[] data = new Block<uint>[totalFilesCount];
             Block<uint>[] parityData = new Block<uint>[totalParFilesCount];
+            var fileNumbersMissing = new List<int>();
             int missingFilesCount = 0;
 
             var longest = Math.Max(metadatas.DeveInputFileMetadatas.Max(t => t.FileLength), metadatas.DeveParFileMetadatas.Max(t => t.FileLength));
@@ -106,11 +109,20 @@ namespace DevePar.FileRepair
             {
                 var metadata = metadatas.DeveInputFileMetadatas[i];
                 var filePath = Path.Combine(workingDir, metadata.FileName);
-                if (!File.Exists(filePath) || FileRepairHelper.CalculateHash(File.ReadAllBytes(filePath)) != metadata.FileHash)
+                var fileExists = File.Exists(filePath);
+                if (!fileExists || FileRepairHelper.CalculateHash(File.ReadAllBytes(filePath)) != metadata.FileHash)
                 {
-                    Console.WriteLine($"Found that {filePath} is missing or corrupted");
+                    if (!fileExists)
+                    {
+                        Console.WriteLine($"Found that {filePath} is missing");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Found that {filePath} is corrupted");
+                    }
                     data[i] = new Block<uint>() { Data = null! };
                     missingFilesCount++;
+                    fileNumbersMissing.Add(i);
                     continue;
                 }
 
@@ -156,26 +168,21 @@ namespace DevePar.FileRepair
             var repairedData = ParityGFAlgorithm.RecoverData3(GFTable, data.ToList(), parityData.ToList(), totalParFilesCount);
             Console.WriteLine($"Repair completed in: {w.Elapsed}");
 
-            for (int i = 0; i < totalFilesCount; i++)
+            foreach (var fileNumberMissing in fileNumbersMissing)
             {
-                var metadata = metadatas.DeveInputFileMetadatas[i];
+                var metadata = metadatas.DeveInputFileMetadatas[fileNumberMissing];
                 var filePath = Path.Combine(workingDir, metadata.FileName);
-                if (File.Exists(filePath))
-                {
-                    continue;
-                }
 
-                var repairedDataAsShorts = repairedData[i].Data.Select(t => (ushort)t).ToArray();
+                var repairedDataAsShorts = repairedData[fileNumberMissing].Data.Select(t => (ushort)t).ToArray();
                 var dataAsBytes = FileRepairHelper.ToByteArray(repairedDataAsShorts);
 
                 // Here we are getting the original file length to truncate the recovered file to it
-                var originalFileLength = metadatas.DeveInputFileMetadatas[i].FileLength;
+                var originalFileLength = metadata.FileLength;
                 var truncatedDataAsBytes = new byte[originalFileLength];
                 Array.Copy(dataAsBytes, truncatedDataAsBytes, originalFileLength);
 
-                var fileName = metadatas.DeveInputFileMetadatas[i].FileName;
-                Console.WriteLine($"Writing file: {fileName}");
-                File.WriteAllBytes(Path.Combine(workingDir, fileName), truncatedDataAsBytes);
+                Console.WriteLine($"Writing repaired file: {filePath}");
+                File.WriteAllBytes(filePath, truncatedDataAsBytes);
             }
 
         }
