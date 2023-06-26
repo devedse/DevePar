@@ -22,6 +22,7 @@ namespace DevePar.Galois
         private uint[] antilog;
         private uint[] log;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public uint Alog(uint value) => antilog[value];
 
         public GFTable(int power, uint polynomial)
@@ -50,6 +51,7 @@ namespace DevePar.Galois
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private uint Shift(uint value)
         {
             var shifted = value << 1;
@@ -79,6 +81,7 @@ namespace DevePar.Galois
 #endif
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public uint Add(uint a, uint b)
         {
             ThrowIfOutsideOfField(a, b);
@@ -86,12 +89,14 @@ namespace DevePar.Galois
             return a ^ b;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public uint Sub(uint a, uint b)
         {
             ThrowIfOutsideOfField(a, b);
             return a ^ b;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public uint Mul(uint a, uint b)
         {
             ThrowIfOutsideOfField(a, b);
@@ -114,6 +119,7 @@ namespace DevePar.Galois
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public uint Div(uint a, uint b)
         {
             ThrowIfOutsideOfField(a, b);
@@ -136,6 +142,7 @@ namespace DevePar.Galois
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public uint Pow(uint a, uint b)
         {
             ThrowIfOutsideOfField(a, b);

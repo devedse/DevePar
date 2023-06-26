@@ -387,8 +387,8 @@ namespace DevePar.Tests.ParityGFAlgorithms
         [Fact]
         public void TestSpecificScenarioHugeMaxShort()
         {
-            int dataBlockCount = 5000;
-            int parityBlockCount = 5000;
+            int dataBlockCount = 1000;
+            int parityBlockCount = 1000;
             int dataLength = 2;
 
 

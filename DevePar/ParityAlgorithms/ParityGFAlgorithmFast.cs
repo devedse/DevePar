@@ -336,7 +336,7 @@ namespace DevePar.ParityAlgorithms
                             {
                                 if (rightmatrix[row, col] != 0)
                                 {
-                                    rightmatrix[row2, col] -= rightmatrix[row, col];
+                                    rightmatrix[row2, col] = (ushort)gfTable.Sub(rightmatrix[row2, col], rightmatrix[row, col]);
                                 }
                             }
                         }

@@ -25,32 +25,35 @@ namespace DevePar.ConsoleApp
             //}
 
 
-            var randomShortData = new ushort[100_000_000];
+            //var randomShortData = new ushort[100_000_000];
 
-            for (int yyy = 0; yyy < randomShortData.Length; yyy++)
-            {
-                randomShortData[yyy] = (ushort)(yyy % 32767);
-            }
+            //for (int yyy = 0; yyy < randomShortData.Length; yyy++)
+            //{
+            //    randomShortData[yyy] = (ushort)(yyy % 32767);
+            //}
 
 
-            var w = Stopwatch.StartNew();
-            for (int yy = 0; yy < 10; yy++)
-            {
-                int superCount = 0;
-                for (uint i = 0; i < randomShortData.Length; i++)
-                {
-                    var inp = randomShortData[i];
-                    var res = inp ^ 12345;
-                    if (res == 1234)
-                    {
-                        superCount++;
-                    }
+            //var w = Stopwatch.StartNew();
+            //for (int yy = 0; yy < 10; yy++)
+            //{
+            //    int superCount = 0;
+            //    for (uint i = 0; i < randomShortData.Length; i++)
+            //    {
+            //        var inp = randomShortData[i];
+            //        var res = inp ^ 12345;
+            //        if (res == 1234)
+            //        {
+            //            superCount++;
+            //        }
 
-                }
-                Console.WriteLine($"{w.Elapsed} => {superCount}");
+            //    }
+            //    Console.WriteLine($"{w.Elapsed} => {superCount}");
 
-                w.Restart();
-            }
+            //    w.Restart();
+            //}
+
+
+            TestSpecificScenarioHugeMaxShort();
 
 
 
@@ -58,11 +61,11 @@ namespace DevePar.ConsoleApp
             //Console.WriteLine(dataList[13000].Value);
 
 
-            for (int i = 0; i < 10; i++)
-            {
-                Console.WriteLine("Waiting..");
-                Thread.Sleep(1000);
-            }
+            //for (int i = 0; i < 10; i++)
+            //{
+            //    Console.WriteLine("Waiting..");
+            //    Thread.Sleep(1000);
+            //}
 
             Console.WriteLine("Hello World!");
 
@@ -84,6 +87,76 @@ namespace DevePar.ConsoleApp
 
             var res2 = test1.Add(250, 50);
         }
+
+
+        public static void TestSpecificScenarioHugeMaxShort()
+        {
+            int dataBlockCount = 1000;
+            int parityBlockCount = 1000;
+            int dataLength = 2;
+
+
+            //Parallel.For(0, 1000, new ParallelOptions() { MaxDegreeOfParallelism = 32 }, (i) =>
+            for (int i = 0; i < 1; i++)
+            {
+                var testData = GenerateTestDataHelper.GenerateTestDataShort(dataBlockCount, dataLength);
+                var expectedData = GenerateTestDataHelper.ConvertToUint(testData);
+
+                var data = GenerateTestDataHelper.ConvertToUint(testData);
+                var parityData = ParityGFAlgorithmFast.GenerateParityData3(GFTable.GFTable16, data, parityBlockCount);
+                var combinedData = data.Concat(parityData).ToList();
+
+                var r = new Random(i);
+
+                //combinedData.Shuffle(r);
+                for (int y = 0; y < parityBlockCount; y++)
+                {
+                    combinedData[y].Data = null;
+                }
+
+
+                var repairedData = ParityGFAlgorithmFast.RecoverData3(GFTable.GFTable16, data, parityData, parityBlockCount);
+
+                //VerifyData(expectedData, repairedData);
+            }
+            //);
+        }
+
+
+        public static void TestSpecificScenarioHugeMaxShortFast()
+        {
+            int dataBlockCount = 1000;
+            int parityBlockCount = 1000;
+            int dataLength = 2;
+
+
+            //Parallel.For(0, 1000, new ParallelOptions() { MaxDegreeOfParallelism = 32 }, (i) =>
+            for (int i = 0; i < 1; i++)
+            {
+                var testData = GenerateTestDataHelper.GenerateTestDataShort(dataBlockCount, dataLength);
+                var expectedData = GenerateTestDataHelper.ConvertToUint(testData);
+
+                var data = GenerateTestDataHelper.ConvertToUint(testData);
+                var parityData = ParityGFAlgorithmFast.GenerateParityData3(GFTable.GFTable16, data, parityBlockCount);
+                var combinedData = data.Concat(parityData).ToList();
+
+                var r = new Random(i);
+
+                //combinedData.Shuffle(r);
+                for (int y = 0; y < parityBlockCount; y++)
+                {
+                    combinedData[y].Data = null;
+                }
+
+
+                var repairedData = ParityGFAlgorithmFast.RecoverData3(GFTable.GFTable16, data, parityData, parityBlockCount);
+
+                //VerifyData(expectedData, repairedData);
+            }
+            //);
+        }
+
+
 
 
         public static void GoParStuff()
