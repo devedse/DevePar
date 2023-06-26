@@ -384,6 +384,40 @@ namespace DevePar.Tests.ParityGFAlgorithms
             //);
         }
 
+        [Fact]
+        public void TestSpecificScenarioHugeMaxShort()
+        {
+            int dataBlockCount = 5000;
+            int parityBlockCount = 5000;
+            int dataLength = 2;
+
+
+            //Parallel.For(0, 1000, new ParallelOptions() { MaxDegreeOfParallelism = 32 }, (i) =>
+            for (int i = 0; i < 1; i++)
+            {
+                var testData = GenerateTestDataHelper.GenerateTestDataShort(dataBlockCount, dataLength);
+                var expectedData = GenerateTestDataHelper.ConvertToUint(testData);
+
+                var data = GenerateTestDataHelper.ConvertToUint(testData);
+                var parityData = ParityGFAlgorithm.GenerateParityData3(gfTable, data, parityBlockCount);
+                var combinedData = data.Concat(parityData).ToList();
+
+                var r = new Random(i);
+
+                combinedData.Shuffle(r);
+                for (int y = 0; y < parityBlockCount; y++)
+                {
+                    combinedData[y].Data = null;
+                }
+
+
+                var repairedData = ParityGFAlgorithm.RecoverData3(gfTable, data, parityData, parityBlockCount);
+
+                VerifyData(expectedData, repairedData);
+            }
+            //);
+        }
+
         private static void RunRepairTest(GFTable gfTable, int dataBlockCount, int parityBlockCount, int dataLength)
         {
             var testData = GenerateTestDataHelper.GenerateTestDataShort(dataBlockCount, dataLength);
@@ -396,7 +430,7 @@ namespace DevePar.Tests.ParityGFAlgorithms
                 var rowsToDelete = DeleteDataHelper.DetermineAllPermutations(dataBlockCount + parityBlockCount, dataBlocksToDeleteCount);
 
                 //for (int zzz = 0; zzz < rowsToDelete.Count; zzz++)
-                Parallel.For(0, rowsToDelete.Count, new ParallelOptions() { MaxDegreeOfParallelism = 1 }, (zzz) =>
+                Parallel.For(0, rowsToDelete.Count, new ParallelOptions() { MaxDegreeOfParallelism = 32 }, (zzz) =>
                 {
                     {
                         var toDelete = rowsToDelete[zzz];

@@ -383,16 +383,16 @@ namespace DevePar.ParityAlgorithms
             }
         }
 
-        public static List<Block<byte>> GenerateParityData2(GFTable gfTable, List<Block<byte>> dataBlocks, int parityBlockCount)
+        public static List<Block<uint>> GenerateParityData2(GFTable gfTable, List<Block<uint>> dataBlocks, int parityBlockCount)
         {
             int dataLengthInsideBlock = dataBlocks.First().Data.Length;
 
             var parityMatrix = CreateParityMatrix2(gfTable, dataBlocks.Count, parityBlockCount);
 
-            var parityDataList = new List<Block<byte>>();
+            var parityDataList = new List<Block<uint>>();
             for (int i = 0; i < parityBlockCount; i++)
             {
-                parityDataList.Add(new Block<byte>() { Data = new byte[dataLengthInsideBlock] });
+                parityDataList.Add(new Block<uint>() { Data = new uint[dataLengthInsideBlock] });
             }
 
             for (int i = 0; i < dataLengthInsideBlock; i++)
@@ -411,7 +411,7 @@ namespace DevePar.ParityAlgorithms
 
                 for (int y = 0; y < parityDataList.Count; y++)
                 {
-                    parityDataList[y].Data[i] = (byte)parityData[y].Value;
+                    parityDataList[y].Data[i] = parityData[y].Value;
                 }
             }
 
@@ -558,7 +558,7 @@ namespace DevePar.ParityAlgorithms
 
 
 
-        public static List<Block<byte>> RecoverData2(GFTable gfTable, List<Block<byte>> dataBlocks, List<Block<byte>> recoveryBlocks, int parityBlockCount)
+        public static List<Block<uint>> RecoverData2(GFTable gfTable, List<Block<uint>> dataBlocks, List<Block<uint>> recoveryBlocks, int parityBlockCount)
         {
             var combinedData = dataBlocks.Concat(recoveryBlocks).ToList();
             var combinedDataWithoutMissingData = combinedData.Where(t => t.Data != null).ToList();
@@ -626,7 +626,7 @@ namespace DevePar.ParityAlgorithms
             {
                 if (dataBlock.Data == null)
                 {
-                    dataBlock.Data = new byte[dataLengthInsideBlock];
+                    dataBlock.Data = new uint[dataLengthInsideBlock];
                 }
             }
 
@@ -652,7 +652,7 @@ namespace DevePar.ParityAlgorithms
                 //Console.WriteLine($"Recovered data:\n\r{res}");
                 for (int y = 0; y < res.Length; y++)
                 {
-                    dataBlocks[y].Data[i] = (byte)res[y].Value;
+                    dataBlocks[y].Data[i] = res[y].Value;
                 }
             }
 
