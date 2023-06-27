@@ -110,6 +110,26 @@ namespace DevePar.Galois
             }
         }
 
+        public uint Mul_Fix(uint a, uint log_y)
+        {
+            if (a == 0)
+            {
+                return 0;
+            }
+            else
+            {
+                var sum = log[a] + log_y;
+                if (sum >= Limit)
+                {
+                    return antilog[sum - Limit];
+                }
+                else
+                {
+                    return antilog[sum];
+                }
+            }
+        }
+
         public uint Div(uint a, uint b)
         {
             ThrowIfOutsideOfField(a, b);
@@ -157,6 +177,28 @@ namespace DevePar.Galois
                     return antilog[sum];
                 }
             }
+        }
+
+        public uint Reciprocal(uint a)
+        {
+            if (a == 0)
+            {
+                throw new ArgumentException("Cannot find the reciprocal of 0 in the field.");
+            }
+            else
+            {
+                var sum = Limit - log[a];
+                if (sum < 0)
+                {
+                    sum += Limit;
+                }
+                return antilog[sum];
+            }
+        }
+
+        public uint Negate(uint a)
+        {
+            return Limit - a;
         }
     }
 }

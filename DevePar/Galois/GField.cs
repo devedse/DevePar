@@ -23,6 +23,11 @@
 
         public static bool operator !=(GField a, GField b) => a.Value != b.Value;
 
+        public GField Reciprocal() => Table.CreateField(Table.Reciprocal(Value));
+
+        //Negate doesn't do anything for Galois fields but for other fields it does
+        public GField Negate() => Table.CreateField(Table.Negate(Value));
+
         public GField Pow(uint power) => Table.CreateField(Table.Pow(Value, power));
 
         public override bool Equals(object obj)

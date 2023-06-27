@@ -4,7 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Numerics;
+using System.Reflection.Metadata;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace DevePar.ParityAlgorithms
 {
@@ -125,6 +128,8 @@ namespace DevePar.ParityAlgorithms
 
         //    return parityDataList;
         //}
+
+
 
         public static MatrixGField CreateParityMatrixForRecovery<T>(GFTable gfTable, List<Block<T>> dataBlocks, List<Block<T>> parityBlocks)
         {
@@ -321,12 +326,316 @@ namespace DevePar.ParityAlgorithms
                 // Perform Gaussian Elimination and then delete the right matrix (which 
                 // will no longer be required).
                 var rightmatrixM = new MatrixGField(rightmatrix);
-                GaussElim(gfTable, outcount, incount, leftmatrixM, rightmatrixM, datamissing);
+                var dataExists = dataBlocks.Select(t => t.Data != null).ToArray();
 
+                //GaussElim5(gfTable, outcount, incount, leftmatrixM, rightmatrixM, datamissing);
+                GaussElim(gfTable, outcount, incount, leftmatrixM, rightmatrixM, datamissing);
+                //return rightmatrixM;
             }
 
             return leftmatrixM;
         }
+
+        public static MatrixGField CreateParityMatrixForRecovery2<T>(GFTable gfTable, List<Block<T>> dataBlocks, List<Block<T>> parityBlocks)
+        {
+            var dataExists = dataBlocks.Select(t => t.Data != null).ToArray();
+            var parityExists = parityBlocks.Select(t => t.Data != null).ToArray();
+
+            //block_lost
+            var block_lost = dataBlocks.Where(t => t.Data == null).Count();
+            //source_num
+            var source_num = dataBlocks.Count;
+            var availableParityBlocks = parityBlocks.Where(t => t.Data != null).Count();
+            var parityBlocksCount = parityBlocks.Count;
+
+            var superMatrix = new GField[block_lost][];
+            for (int i = 0; i < block_lost; i++)
+            {
+                superMatrix[i] = new GField[source_num];
+            }
+
+            //which parity block to substitute for missing source block
+            ushort[] id = new ushort[availableParityBlocks];
+
+            int j = 0;
+            for (int i = 0; (i < parityBlocksCount) && (j < block_lost); i++)
+            {
+                // ignore blocks marked as unavailable
+                if (parityExists[i])
+                {
+                    id[j++] = (ushort)i;
+                }
+            }
+
+            if (j < block_lost)
+            {
+                throw new InvalidOperationException("Not enough recovery blocks.");
+            }
+
+
+
+            // create a matrix of only parity blocks that exist and are used
+            int n = 0;
+            uint constant = 1;
+            for (int i = 0; i < source_num; i++)
+            {
+                //Set values vertically row by row
+                while (n <= 65535)
+                {
+                    constant = gfTable.Mul_Fix(constant, 1);
+                    n++;
+                    if ((n % 3 != 0) && (n % 5 != 0) && (n % 17 != 0) && (n % 257 != 0))
+                        break;
+                }
+
+                int k = 0;
+                for (j = 0; j < source_num; j++)
+                {
+                    // row j, column i
+                    if (!dataExists[j])
+                    {   // If the corresponding part is supplemented with a parity block
+                        superMatrix[k][i] = gfTable.CreateField(gfTable.Pow(constant, id[k]));
+                        k++;
+                    }
+                }
+            }
+
+            var superDuperMatrix = new MatrixGField(superMatrix);
+
+            GaussElim6(gfTable, superDuperMatrix, block_lost, source_num, dataExists);
+
+            return superDuperMatrix;
+        }
+
+        public static void GaussElim6(GFTable gfTable, MatrixGField mat, int rows, int columns, bool[] dataExists)
+        {
+            int pivot = 0;
+
+            for (int i = 0; i < rows; i++)
+            {
+                while ((pivot < columns) && dataExists[pivot])
+                {
+                    pivot++;
+                }
+
+                // Divide the row by element i,pivot
+                var factor = mat[i, pivot]; //mat(j, pivot) should be non-zero
+
+
+                if (factor.Value > 1)
+                {
+                    // If factor is greater than 1, divide by factor to make it 1
+                    mat[i, pivot] = gfTable.CreateField(1); //This is a way to finish the queue with one
+                    DivideRow(mat, i, factor);
+                }
+                else if (factor.Value == 0)
+                {
+                    // If factor = 0, you can't compute the inverse of the matrix
+                    throw new InvalidOperationException("RS computation error.");
+                }
+
+
+                // if the same pivot column in another row is non-zero, to make it 0
+                // XOR multiplied by row i
+                for (int j = rows - 1; j >= 0; j--)
+                {
+                    if (j == i)
+                        continue;   // skip the same line
+
+                    // pivot column value in row j
+                    factor = mat[j, pivot];
+
+                    // Due to the previous calculation, the value of the pivot column in row i is always 1
+                    // so this factor is the multiplier
+                    mat[j, pivot] = gfTable.CreateField(0);
+
+                    GaloisRegionMultiply(mat.Data[i], mat.Data[j], (uint)mat.Columns, factor);
+                }
+
+                pivot++;
+            }
+        }
+
+        public static void GaussElim5(GFTable gfTable, uint rows, uint leftcols, MatrixGField leftmatrix, MatrixGField rightmatrix, uint datamissing)
+        {
+            var w = Stopwatch.StartNew();
+            int pivot = 0;
+            for (int i = 0; i < datamissing; i++)
+            {
+                if (DebugLogging)
+                {
+                    Console.WriteLine($"{w.Elapsed} GaussElim Outer loop > Gaus row: {i}");
+                    w.Restart();
+                }
+
+                while ((pivot < rows) && rightmatrix[i, pivot].Value == 0)
+                    pivot++;
+
+                var pivotValue = rightmatrix[i, pivot];
+                if (pivotValue.Value == 0)
+                {
+                    throw new InvalidOperationException("RS computation error.");
+                }
+
+                // Make the pivot value 1 if it is not already
+                if (pivotValue.Value > 1)
+                {
+                    rightmatrix[i, pivot] = gfTable.CreateField(1);
+                    for (int j = i + 1; j < rows; j++)
+                    {
+                        if (rightmatrix[i, j].Value != 0)
+                        {
+                            rightmatrix[i, j] /= pivotValue;
+                        }
+                    }
+                }
+
+                for (int j = 0; j < rows; j++)
+                {
+                    if (i != j)
+                    {
+                        var factor = rightmatrix[j, pivot];
+                        rightmatrix[j, pivot] = gfTable.CreateField(0);
+                        for (int k = pivot + 1; k < rows; k++)
+                        {
+                            if (rightmatrix[i, k].Value != 0)
+                            {
+                                rightmatrix[j, k] -= rightmatrix[i, k] * factor;
+                            }
+                        }
+                    }
+                }
+                pivot++;
+            }
+        }
+
+        public static void GaussElim4(GFTable gfTable, uint rows, uint leftcols, MatrixGField leftmatrix, MatrixGField rightmatrix, uint datamissing, bool[] dataExists)
+        {
+            int pivot = 0;
+            for (int i = 0; i < rows; i++)
+            {
+                //while (pivot < rightmatrix.Columns && dataExists[pivot])
+                //    pivot++;
+
+                var factor = rightmatrix[i, i];
+
+                if (factor.Value > 1)
+                {
+                    rightmatrix[i, i] = gfTable.CreateField(1);
+                    DivideRow(rightmatrix, i, factor);
+                }
+                else if (factor.Value == 0)
+                {
+                    throw new InvalidOperationException($"RS computation error at pivot {pivot}");
+                }
+
+                for (int j = (int)rows - 1; j >= 0; j--)
+                {
+                    if (j == i)
+                        continue;
+
+                    //int row_start2 = rightmatrix.Columns * j;
+                    factor = rightmatrix[j, i];
+                    rightmatrix[j, i] = gfTable.CreateField(0);
+
+                    GaloisRegionMultiply(rightmatrix.Data[i], rightmatrix.Data[j], (uint)rightmatrix.Columns, factor);
+                }
+                pivot++;
+            }
+        }
+
+        private static void DivideRow(MatrixGField mat, int row, GField divisor)
+        {
+            var reciprocal = divisor.Reciprocal();
+            for (int i = 0; i < mat.Columns; i++)
+            {
+                mat[row, i] /= divisor;
+            }
+        }
+
+        public static void GaloisRegionMultiply(GField[] region1, GField[] region2, uint count, GField factor)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                var blah = region1[i] * factor;
+                region2[i] = region2[i] + blah;
+            }
+        }
+
+        public static void GaussElim3(GFTable gfTable, uint rows, uint leftcols, MatrixGField leftmatrix, MatrixGField rightmatrix, uint datamissing)
+        {
+            var rowsInt = (int)rows;
+            var leftColsInt = (int)leftcols;
+
+            var w = Stopwatch.StartNew();
+            for (int row = 0; row < datamissing; row++)
+            {
+                if (DebugLogging)
+                {
+                    Console.WriteLine($"{w.Elapsed} GaussElim Outer loop > Gaus row: {row}");
+                    w.Restart();
+                }
+                var pivotValue = rightmatrix[row, row];
+
+                if (pivotValue.Value == 0)
+                {
+                    throw new InvalidOperationException("RS computation error.");
+                }
+
+                if (pivotValue.Value != 1)
+                {
+                    var reciprocalPivotValue = pivotValue.Reciprocal();
+                    Parallel.For(0, leftColsInt, col =>
+                    {
+                        if (leftmatrix[row, col].Value != 0)
+                        {
+                            leftmatrix[row, col] *= reciprocalPivotValue;
+                        }
+                    });
+
+                    rightmatrix[row, row] = gfTable.CreateField(1);
+
+                    Parallel.For(row + 1, rowsInt, col =>
+                    {
+                        if (rightmatrix[row, col].Value != 0)
+                        {
+                            rightmatrix[row, col] *= reciprocalPivotValue;
+                        }
+                    });
+                }
+
+                Parallel.For(0, rowsInt, row2 =>
+                {
+                    if (row != row2)
+                    {
+                        var scaleValue = rightmatrix[row2, row];
+                        if (scaleValue.Value != 0)
+                        {
+                            Parallel.For(0, leftColsInt, col =>
+                            {
+                                var value = leftmatrix[row, col].Value;
+                                if (value != 0)
+                                {
+                                    var leftValue = gfTable.CreateField(value);
+                                    leftmatrix[row2, col] -= leftValue * scaleValue;
+                                }
+                            });
+
+                            Parallel.For(row, rowsInt, col =>
+                            {
+                                var value = rightmatrix[row, col].Value;
+                                if (value != 0)
+                                {
+                                    var rightValue = gfTable.CreateField(value);
+                                    rightmatrix[row2, col] -= rightValue * scaleValue;
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+        }
+
 
         public static void GaussElim2(GFTable gfTable, uint rows, uint leftcols, MatrixGField leftmatrix, MatrixGField rightmatrix, uint datamissing)
         {
@@ -346,11 +655,11 @@ namespace DevePar.ParityAlgorithms
                 numPivots++;
 
                 // Simplify the pivot row
-                MultiplyRow(leftmatrix, pivotRow, gfTable.Reciprocal(rightmatrix[pivotRow, j]));
+                MultiplyRow(leftmatrix, pivotRow, rightmatrix[pivotRow, j].Reciprocal());
 
                 // Eliminate rows below
                 for (int i = pivotRow + 1; i < rows; i++)
-                    AddRows(leftmatrix, pivotRow, i, gfTable.Negate(rightmatrix[i, j]));
+                    AddRows(leftmatrix, pivotRow, i, rightmatrix[i, j].Negate());
             }
 
             // Compute reduced row echelon form (RREF)
@@ -366,7 +675,7 @@ namespace DevePar.ParityAlgorithms
 
                 // Eliminate rows above
                 for (int j = i - 1; j >= 0; j--)
-                    AddRows(leftmatrix, i, j, gfTable.Negate(rightmatrix[j, pivotCol]));
+                    AddRows(leftmatrix, i, j, rightmatrix[j, pivotCol].Negate());
             }
         }
 
@@ -770,11 +1079,19 @@ namespace DevePar.ParityAlgorithms
             var combinedDataWithMissingData = combinedData.Where(t => t.Data == null).ToList();
             int dataLengthInsideBlock = combinedData.First(t => t.Data != null).Data.Length;
 
+
+            var ww = Stopwatch.StartNew();
             var recoveryMatrixDing = CreateParityMatrixForRecovery(gfTable, dataBlocks, recoveryBlocks);
+            var el1 = ww.Elapsed;
 
+            ww.Restart();
+            var recoveryMatrixDing2 = CreateParityMatrixForRecovery2(gfTable, dataBlocks, recoveryBlocks);
+            var el2 = ww.Elapsed;
 
+            var dataBlocksWithMissingData = dataBlocks.Where(t => t.Data == null).ToList();
 
-
+            Console.WriteLine($"Parity matrix 1: {el1}");
+            Console.WriteLine($"Parity matrix 2: {el2}");
 
             foreach (var block in combinedDataWithMissingData)
             {
@@ -801,11 +1118,17 @@ namespace DevePar.ParityAlgorithms
                 //var vector = new CoolVectorField(toArray);
 
                 var res = recoveryMatrixDing.Multiply(toArray);
+                var res2 = recoveryMatrixDing2.Multiply(toArray);
 
                 //Console.WriteLine($"Recovered data:\n\r{res}");
-                for (int y = 0; y < res.Length; y++)
+                //for (int y = 0; y < res.Length; y++)
+                //{
+                //    combinedDataWithMissingData[y].Data[i] = res[y].Value;
+                //}
+
+                for (int y = 0; y < res2.Length; y++)
                 {
-                    combinedDataWithMissingData[y].Data[i] = res[y].Value;
+                    dataBlocks[y].Data[i] = res[y].Value;
                 }
             }
 

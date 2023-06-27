@@ -8,7 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace DevePar.Tests.ParityGFAlgorithms
+namespace DevePar.Tests.ParityAlgorithms
 {
     public class ParityGFAlgorithmFacts
     {
@@ -503,7 +503,7 @@ namespace DevePar.Tests.ParityGFAlgorithms
             }
         }
 
-       
+
 
 
         [Fact]
