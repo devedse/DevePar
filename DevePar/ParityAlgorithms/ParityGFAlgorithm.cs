@@ -328,6 +328,71 @@ namespace DevePar.ParityAlgorithms
             return leftmatrixM;
         }
 
+        public static void GaussElim2(GFTable gfTable, uint rows, uint leftcols, MatrixGField leftmatrix, MatrixGField rightmatrix, uint datamissing)
+        {
+            int numPivots = 0;
+            for (int j = 0; j < rows && numPivots < datamissing; j++)
+            {
+                // Find a pivot row for this column
+                int pivotRow = numPivots;
+                while (pivotRow < rows && rightmatrix[pivotRow, j].Value == 0)
+                    pivotRow++;
+
+                if (pivotRow == rows)
+                    continue;  // Cannot eliminate on this column
+
+                SwapRows(leftmatrix, numPivots, pivotRow);
+                pivotRow = numPivots;
+                numPivots++;
+
+                // Simplify the pivot row
+                MultiplyRow(leftmatrix, pivotRow, gfTable.Reciprocal(rightmatrix[pivotRow, j]));
+
+                // Eliminate rows below
+                for (int i = pivotRow + 1; i < rows; i++)
+                    AddRows(leftmatrix, pivotRow, i, gfTable.Negate(rightmatrix[i, j]));
+            }
+
+            // Compute reduced row echelon form (RREF)
+            for (int i = numPivots - 1; i >= 0; i--)
+            {
+                // Find pivot
+                int pivotCol = 0;
+                while (pivotCol < leftcols && rightmatrix[i, pivotCol].Value == 0)
+                    pivotCol++;
+
+                if (pivotCol == leftcols)
+                    continue;  // Skip this all-zero row
+
+                // Eliminate rows above
+                for (int j = i - 1; j >= 0; j--)
+                    AddRows(leftmatrix, i, j, gfTable.Negate(rightmatrix[j, pivotCol]));
+            }
+        }
+
+        private static void SwapRows(MatrixGField matrix, int row1, int row2)
+        {
+            var temp = matrix.Data[row1];
+            matrix.Data[row1] = matrix.Data[row2];
+            matrix.Data[row2] = temp;
+        }
+
+        private static void MultiplyRow(MatrixGField matrix, int row, GField reciprocal)
+        {
+            for (int i = 0; i < matrix.Columns; i++)
+            {
+                matrix[row, i] *= reciprocal;
+            }
+        }
+
+        private static void AddRows(MatrixGField matrix, int row1, int row2, GField negate)
+        {
+            for (int i = 0; i < matrix.Columns; i++)
+            {
+                matrix[row2, i] += matrix[row1, i] * negate;
+            }
+        }
+
         public static void GaussElim(GFTable gfTable, uint rows, uint leftcols, MatrixGField leftmatrix, MatrixGField rightmatrix, uint datamissing)
         {
             var w = Stopwatch.StartNew();
