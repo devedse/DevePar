@@ -336,6 +336,53 @@ namespace DevePar.ParityAlgorithms
             return leftmatrixM;
         }
 
+        public static GField[] CreateBaseConstants<T>(GFTable gfTable, List<Block<T>> dataBlocks)
+        {
+            var source_num = dataBlocks.Count;
+
+            GField[] constant = new GField[source_num];
+
+            int n = 0;
+            uint temp = 1;
+            for (int i = 0; i < source_num; i++)
+            {
+                while (n <= ushort.MaxValue)
+                {
+                    temp = gfTable.Mul_Fix(temp, 1);
+                    n++;
+                    if ((n % 3 != 0) && (n % 5 != 0) && (n % 17 != 0) && (n % 257 != 0))
+                        break;
+                }
+                constant[i] = gfTable.CreateField(temp);
+            }
+
+            return constant;
+        }
+
+        public static MatrixGField CreateParityMatrixForEncode<T>(GFTable gfTable, List<Block<T>> dataBlocks, List<Block<T>> parityBlocks)
+        {
+            var baseConstants = CreateBaseConstants(gfTable, dataBlocks);
+            var source_num = dataBlocks.Count;
+            var parity_num = parityBlocks.Count;
+
+
+            // Generate the matrix for encoding
+            GField[][] constantMatrix = new GField[parity_num][];
+            for (uint j = 0; j < parity_num; j++)
+            {
+                constantMatrix[j] = new GField[source_num];
+                for (int i = 0; i < source_num; i++)
+                {
+                    // Assume that galois_power() is implemented in gfTable.Power()
+                    constantMatrix[j][i] = baseConstants[i].Pow(j);
+                }
+            }
+
+            var encodeMatrix = new MatrixGField(constantMatrix);
+
+            return encodeMatrix;
+        }
+
         public static MatrixGField CreateParityMatrixForRecovery2<T>(GFTable gfTable, List<Block<T>> dataBlocks, List<Block<T>> parityBlocks)
         {
             var dataExists = dataBlocks.Select(t => t.Data != null).ToArray();
@@ -843,6 +890,7 @@ namespace DevePar.ParityAlgorithms
             }
 
             var parityMatrix = CreateParityMatrixForRecovery(gfTable, dataBlocks, parityDataList);
+            var parityMatrix2 = CreateParityMatrixForEncode(gfTable, dataBlocks, parityDataList);
 
             parityDataList = new List<Block<uint>>();
             for (int i = 0; i < parityBlockCount; i++)
@@ -862,11 +910,14 @@ namespace DevePar.ParityAlgorithms
                 var toArray = data.ToArray();
 
                 var resultData = parityMatrix.Multiply(toArray);
+                var resultData2 = parityMatrix2.Multiply(toArray);
                 var parityData = resultData.ToArray();
+                var parityData2 = resultData2.ToArray();
 
                 for (int y = 0; y < parityDataList.Count; y++)
                 {
-                    parityDataList[y].Data[i] = parityData[y].Value;
+                    //parityDataList[y].Data[i] = parityData[y].Value;
+                    parityDataList[y].Data[i] = parityData2[y].Value;
                 }
             }
 
