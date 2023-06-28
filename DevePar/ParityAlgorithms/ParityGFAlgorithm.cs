@@ -453,7 +453,7 @@ namespace DevePar.ParityAlgorithms
 
             GaussElim6(gfTable, superDuperMatrix, block_lost, source_num, dataExists);
 
-            ColumnSwapper(superDuperMatrix, dataExists);
+            //ColumnSwapper(superDuperMatrix, dataExists);
 
             return superDuperMatrix;
         }
@@ -481,6 +481,19 @@ namespace DevePar.ParityAlgorithms
             }
 
             return columnMapping;
+        }
+
+        private static Dictionary<int, int> CreateColumnMappingInverted(bool[] dataExists)
+        {
+            var columnMapping = CreateColumnMapping(dataExists);
+
+            var aaa = new Dictionary<int, int>();
+            foreach (var kvp in columnMapping)
+            {
+                aaa.Add(kvp.Value, kvp.Key);
+            }
+
+            return aaa;
         }
 
 
@@ -1271,7 +1284,7 @@ namespace DevePar.ParityAlgorithms
             var combinedData = dataBlocks.Concat(recoveryBlocks).ToList();
 
             var dataExists = dataBlocks.Select(t => t.Data != null).ToArray();
-            Dictionary<int, int> columnMapping = CreateColumnMapping(dataExists);
+            Dictionary<int, int> columnMappingInverted = CreateColumnMappingInverted(dataExists);
 
             var combinedDataWithoutMissingData = combinedData.Where(t => t.Data != null).ToList();
             var combinedDataWithMissingData = combinedData.Where(t => t.Data == null).ToList();
@@ -1321,9 +1334,9 @@ namespace DevePar.ParityAlgorithms
                 var res = recoveryMatrixDing.Multiply(toArray);
 
                 //Dit is een smerige super coole re-order van de veldjes
-                var reorderToArray = toArray.Select((field, i) => new { field, i }).OrderBy(t => columnMapping[t.i]).Select(t => t.i).ToArray();
+                var reorderToArray = toArray.Select((field, i) => new { field, i }).OrderBy(t => columnMappingInverted[t.i]).Select(t => t.field).ToArray();
 
-                var res2 = recoveryMatrixDing2.Multiply(toArray);
+                var res2 = recoveryMatrixDing2.Multiply(reorderToArray);
 
                 //Console.WriteLine($"Recovered data:\n\r{res}");
                 for (int y = 0; y < res2.Length; y++)
