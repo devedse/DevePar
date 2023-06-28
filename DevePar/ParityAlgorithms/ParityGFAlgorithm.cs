@@ -1269,6 +1269,10 @@ namespace DevePar.ParityAlgorithms
         public static List<Block<uint>> RecoverData3(GFTable gfTable, List<Block<uint>> dataBlocks, List<Block<uint>> recoveryBlocks, int parityBlockCount)
         {
             var combinedData = dataBlocks.Concat(recoveryBlocks).ToList();
+
+            var dataExists = dataBlocks.Select(t => t.Data != null).ToArray();
+            Dictionary<int, int> columnMapping = CreateColumnMapping(dataExists);
+
             var combinedDataWithoutMissingData = combinedData.Where(t => t.Data != null).ToList();
             var combinedDataWithMissingData = combinedData.Where(t => t.Data == null).ToList();
             int dataLengthInsideBlock = combinedData.First(t => t.Data != null).Data.Length;
@@ -1315,6 +1319,10 @@ namespace DevePar.ParityAlgorithms
                 //var vector = new CoolVectorField(toArray);
 
                 var res = recoveryMatrixDing.Multiply(toArray);
+
+                //Dit is een smerige super coole re-order van de veldjes
+                var reorderToArray = toArray.Select((field, i) => new { field, i }).OrderBy(t => columnMapping[t.i]).Select(t => t.i).ToArray();
+
                 var res2 = recoveryMatrixDing2.Multiply(toArray);
 
                 //Console.WriteLine($"Recovered data:\n\r{res}");
