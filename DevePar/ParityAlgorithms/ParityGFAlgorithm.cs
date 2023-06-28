@@ -3,6 +3,7 @@ using DevePar.LinearAlgebra;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Reflection.Metadata;
@@ -451,7 +452,64 @@ namespace DevePar.ParityAlgorithms
 
             GaussElim6(gfTable, superDuperMatrix, block_lost, source_num, dataExists);
 
+            ColumnSwapper(superDuperMatrix, dataExists);
+
             return superDuperMatrix;
+        }
+
+        private static Dictionary<int, int> CreateColumnMapping(bool[] dataExists)
+        {
+            int numColumns = dataExists.Length;
+
+            // Count the number of existing data columns
+            int numDataExists = dataExists.Count(x => x);
+
+            Dictionary<int, int> columnMapping = new Dictionary<int, int>();
+            int indexExists = 0, indexMissing = numDataExists;
+
+            for (int i = 0; i < numColumns; i++)
+            {
+                if (dataExists[i])
+                {
+                    columnMapping[i] = indexExists++;
+                }
+                else
+                {
+                    columnMapping[i] = indexMissing++;
+                }
+            }
+
+            return columnMapping;
+        }
+
+
+        private static void ColumnSwapper(MatrixGField superDuperMatrix, bool[] dataExists)
+        {
+            Dictionary<int, int> columnMapping = CreateColumnMapping(dataExists);
+
+            // Bubble sort based on the created column mapping
+            for (int i = 0; i < superDuperMatrix.Columns - 1; i++)
+            {
+                for (int j = 0; j < superDuperMatrix.Columns - i - 1; j++)
+                {
+                    if (columnMapping[j] > columnMapping[j + 1])
+                    {
+                        // Swap columns j and j+1
+                        var tempColumn = new GField[superDuperMatrix.Rows];
+                        for (int row = 0; row < superDuperMatrix.Rows; row++)
+                        {
+                            tempColumn[row] = superDuperMatrix[row, j];
+                            superDuperMatrix[row, j] = superDuperMatrix[row, j + 1];
+                            superDuperMatrix[row, j + 1] = tempColumn[row];
+                        }
+
+                        // Swap column mappings
+                        int tempMapping = columnMapping[j];
+                        columnMapping[j] = columnMapping[j + 1];
+                        columnMapping[j + 1] = tempMapping;
+                    }
+                }
+            }
         }
 
         public static void GaussElim6(GFTable gfTable, MatrixGField mat, int rows, int columns, bool[] dataExists)
@@ -1125,6 +1183,77 @@ namespace DevePar.ParityAlgorithms
             return dataBlocks;
         }
 
+        public static void MatrixCompareColumns(List<Block<uint>> dataBlocks, List<Block<uint>> recoveryBlocks, MatrixGField goodMatrix, MatrixGField badMatrix)
+        {
+            if (goodMatrix.Columns != badMatrix.Columns)
+            {
+                throw new InvalidOperationException("MAG NIET");
+            }
+
+
+            Dictionary<int, int> columnMapping = new Dictionary<int, int>();
+
+            for (int i = 0; i < Math.Min(goodMatrix.Rows, badMatrix.Rows); i++)
+            {
+                for (int j = 0; j < goodMatrix.Columns; j++)
+                {
+                    for (int k = 0; k < badMatrix.Columns; k++)
+                    {
+                        if (goodMatrix[i, j] == badMatrix[i, k])
+                        {
+                            if (!columnMapping.ContainsKey(j))
+                            {
+                                columnMapping.Add(j, k);
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+
+            StringBuilder sb = new StringBuilder();
+
+            // Getting missing data blocks
+            var missingDataBlocks = dataBlocks
+                .Select((block, index) => new { Block = block, Index = index })
+                .Where(x => x.Block.Data == null)
+                .Select(x => x.Index);
+
+            string dataMessage = missingDataBlocks.Any()
+                ? $"Data: {string.Join(", ", missingDataBlocks)}"
+                : string.Empty;
+
+            // Getting missing recovery blocks
+            var missingRecoveryBlocks = recoveryBlocks
+                .Select((block, index) => new { Block = block, Index = index })
+                .Where(x => x.Block.Data == null)
+                .Select(x => x.Index);
+
+            string parityMessage = missingRecoveryBlocks.Any()
+                ? $"Parity: {string.Join(", ", missingRecoveryBlocks)}"
+                : string.Empty;
+
+            sb.AppendLine($"({dataBlocks.Count},{recoveryBlocks.Count}) {dataMessage} {parityMessage}");
+
+            if (columnMapping.Values.All(t => t == 0))
+            {
+                return;
+            }
+
+            foreach (KeyValuePair<int, int> pair in columnMapping)
+            {
+                var same = pair.Key == pair.Value ? " same" : "";
+                sb.AppendLine($"{pair.Key} => {pair.Value}{same}");
+            }
+
+            var resultString = sb.ToString();
+            Console.WriteLine(resultString);
+            Trace.WriteLine(resultString);
+            Debug.WriteLine(resultString);
+
+            File.AppendAllText("outputje.txt", resultString + Environment.NewLine + Environment.NewLine);
+        }
+
         public static List<Block<uint>> RecoverData3(GFTable gfTable, List<Block<uint>> dataBlocks, List<Block<uint>> recoveryBlocks, int parityBlockCount)
         {
             var combinedData = dataBlocks.Concat(recoveryBlocks).ToList();
@@ -1140,6 +1269,9 @@ namespace DevePar.ParityAlgorithms
             ww.Restart();
             var recoveryMatrixDing2 = CreateParityMatrixForRecovery2(gfTable, dataBlocks, recoveryBlocks);
             var el2 = ww.Elapsed;
+
+            MatrixCompareColumns(dataBlocks, recoveryBlocks, recoveryMatrixDing, recoveryMatrixDing2);
+
 
             var dataBlocksWithMissingData = dataBlocks.Where(t => t.Data == null).ToList();
 
@@ -1179,7 +1311,7 @@ namespace DevePar.ParityAlgorithms
                 //    combinedDataWithMissingData[y].Data[i] = res[y].Value;
                 //}
 
-                for (int y = 0; y < res2.Length; y++)
+                for (int y = 0; y < res.Length; y++)
                 {
                     dataBlocks[y].Data[i] = res[y].Value;
                 }
