@@ -387,6 +387,7 @@ namespace DevePar.ParityAlgorithms
         public static MatrixGField CreateParityMatrixForRecovery2<T>(GFTable gfTable, List<Block<T>> dataBlocks, List<Block<T>> parityBlocks)
         {
             var dataExists = dataBlocks.Select(t => t.Data != null).ToArray();
+            Dictionary<int, int> columnMapping = CreateColumnMapping(dataExists);
             var parityExists = parityBlocks.Select(t => t.Data != null).ToArray();
 
             //block_lost
@@ -487,6 +488,15 @@ namespace DevePar.ParityAlgorithms
         {
             Dictionary<int, int> columnMapping = CreateColumnMapping(dataExists);
 
+            //var tempColumn = new GField[superDuperMatrix.Rows];
+            //void SwapColumns(int from, int to)
+            //{
+            //    for (int row = 0; row < superDuperMatrix.Rows; row++)
+            //    {
+                    
+            //    }
+            //}
+
             // Bubble sort based on the created column mapping
             for (int i = 0; i < superDuperMatrix.Columns - 1; i++)
             {
@@ -515,6 +525,8 @@ namespace DevePar.ParityAlgorithms
         public static void GaussElim6(GFTable gfTable, MatrixGField mat, int rows, int columns, bool[] dataExists)
         {
             int pivot = 0;
+
+            var columnMapping = CreateColumnMapping(dataExists);
 
             for (int i = 0; i < rows; i++)
             {
@@ -575,7 +587,7 @@ namespace DevePar.ParityAlgorithms
             for (int i = 0; i < count; i++)
             {
                 var blah = region1[i] * factor;
-                region2[i] = region2[i] + blah;
+                region2[i] = region2[i] - blah;
             }
         }
 
@@ -1242,7 +1254,7 @@ namespace DevePar.ParityAlgorithms
 
             foreach (KeyValuePair<int, int> pair in columnMapping)
             {
-                var same = pair.Key == pair.Value ? " same" : "";
+                var same = pair.Key == pair.Value ? " same" : " DIFFERENT";
                 sb.AppendLine($"{pair.Key} => {pair.Value}{same}");
             }
 
@@ -1270,7 +1282,7 @@ namespace DevePar.ParityAlgorithms
             var recoveryMatrixDing2 = CreateParityMatrixForRecovery2(gfTable, dataBlocks, recoveryBlocks);
             var el2 = ww.Elapsed;
 
-            MatrixCompareColumns(dataBlocks, recoveryBlocks, recoveryMatrixDing, recoveryMatrixDing2);
+            //MatrixCompareColumns(dataBlocks, recoveryBlocks, recoveryMatrixDing, recoveryMatrixDing2);
 
 
             var dataBlocksWithMissingData = dataBlocks.Where(t => t.Data == null).ToList();
@@ -1306,15 +1318,15 @@ namespace DevePar.ParityAlgorithms
                 var res2 = recoveryMatrixDing2.Multiply(toArray);
 
                 //Console.WriteLine($"Recovered data:\n\r{res}");
+                for (int y = 0; y < res2.Length; y++)
+                {
+                    combinedDataWithMissingData[y].Data[i] = res2[y].Value;
+                }
+
                 //for (int y = 0; y < res.Length; y++)
                 //{
-                //    combinedDataWithMissingData[y].Data[i] = res[y].Value;
+                //    dataBlocks[y].Data[i] = res[y].Value;
                 //}
-
-                for (int y = 0; y < res.Length; y++)
-                {
-                    dataBlocks[y].Data[i] = res[y].Value;
-                }
             }
 
 

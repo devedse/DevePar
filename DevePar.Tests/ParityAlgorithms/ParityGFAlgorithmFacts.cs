@@ -62,8 +62,8 @@ namespace DevePar.Tests.ParityAlgorithms
         [Fact]
         public void RestoresMissingDataForDataFor5BlocksAnd5Parity()
         {
-            int dataBlockCount = 6;
-            int parityBlockCount = 6;
+            int dataBlockCount = 5;
+            int parityBlockCount = 5;
             int dataLength = 1;
             RunRepairTest(gfTable, dataBlockCount, parityBlockCount, dataLength);
         }
@@ -485,7 +485,7 @@ namespace DevePar.Tests.ParityAlgorithms
                         {
                             var repairedData = ParityGFAlgorithm.RecoverData3(gfTable, data, parityData, parityBlockCount);
 
-                            //Assert.True(VerificationHelper.VerifyData(expectedData, repairedData));
+                            Assert.True(VerificationHelper.VerifyData(expectedData, repairedData));
                         }
                     }
                 }
