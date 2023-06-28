@@ -503,6 +503,24 @@ namespace DevePar.ParityAlgorithms
             }
         }
 
+        private static void DivideRow(MatrixGField mat, int row, GField divisor)
+        {
+            var reciprocal = divisor.Reciprocal();
+            for (int i = 0; i < mat.Columns; i++)
+            {
+                mat[row, i] /= divisor;
+            }
+        }
+
+        public static void GaloisRegionMultiply(GField[] region1, GField[] region2, uint count, GField factor)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                var blah = region1[i] * factor;
+                region2[i] = region2[i] + blah;
+            }
+        }
+
         public static void GaussElim5(GFTable gfTable, uint rows, uint leftcols, MatrixGField leftmatrix, MatrixGField rightmatrix, uint datamissing)
         {
             var w = Stopwatch.StartNew();
@@ -591,23 +609,7 @@ namespace DevePar.ParityAlgorithms
             }
         }
 
-        private static void DivideRow(MatrixGField mat, int row, GField divisor)
-        {
-            var reciprocal = divisor.Reciprocal();
-            for (int i = 0; i < mat.Columns; i++)
-            {
-                mat[row, i] /= divisor;
-            }
-        }
 
-        public static void GaloisRegionMultiply(GField[] region1, GField[] region2, uint count, GField factor)
-        {
-            for (int i = 0; i < count; i++)
-            {
-                var blah = region1[i] * factor;
-                region2[i] = region2[i] + blah;
-            }
-        }
 
         public static void GaussElim3(GFTable gfTable, uint rows, uint leftcols, MatrixGField leftmatrix, MatrixGField rightmatrix, uint datamissing)
         {
