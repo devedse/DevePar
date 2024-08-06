@@ -14,15 +14,15 @@ namespace DevePar.ConsoleApp
     {
         public static void Main(string[] args)
         {
-            FileRepairTest();
+            //FileRepairTest();
 
-            //GenerateUberMatrix();
+            GenerateUberMatrix();
         }
 
         public static void GenerateUberMatrix()
         {
-            int dataBlockCount = short.MaxValue;
-            int parityBlockCount = short.MaxValue;
+            int dataBlockCount = 4000;
+            int parityBlockCount = 4000;
             int dataLength = 2;
             var gfTable = GFTable.GFTable16;
 
